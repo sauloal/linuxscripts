@@ -1,0 +1,9 @@
+#!/bin/bash
+NAME=2008
+ANNO=2005-2010/2008
+LOCAL=/media/STUFF\(60g\)/FOTOS
+BUCKET=saulo
+REMOTE=backups/SAULO-LAPTOP/E/FOTOS
+CMD="~/bin/s3cmd -v -v -v -v -c ./s3cfg --progress --skip-existing --no-check-md5 --no-delete-removed sync $LOCAL/$ANNO/ s3://$BUCKET/$REMOTE/$ANNO/"
+echo $CMD
+$CMD 2>&1 | tee sync_$NAME.log

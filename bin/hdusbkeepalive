@@ -1,0 +1,166 @@
+#!/usr/bin/perl -w
+use POSIX qw/strftime/;
+use Cwd 'abs_path';
+use FindBin qw($Bin);
+use lib "$Bin/lib";
+use readpass;
+
+my $secr   = new readpass();
+my $cnf    = $secr->getValue("hdusbkeepalive_conf");
+my $log    = $secr->getValue("hdusbkeepalive_log");
+my $devf   = $secr->getValue("hdusbkeepalive_devf");
+my $mountf = $secr->getValue("hdusbkeepalive_mount");
+my $dirUsr = $secr->getValue("hdusbkeepalive_dirusr");
+my $foreal = $secr->getValue("hdusbkeepalive_foreal"); # execute command
+my $mkShr  = $secr->getValue("hdusbkeepalive_makechared"); # make shared
+my $dirMod = $secr->getValue("hdusbkeepalive_dirmode");
+
+my $time   = strftime('%d-%m-%Y %H:%M:%S', localtime());
+
+open LOG, ">>$log" or die "could not open log file $log: $!";
+print LOG "$time STARTED\n";
+
+foreach my $line ( split(",", $cnf) )
+{
+	chomp $line;
+	next if ( $line =~ /^\#/ );
+
+	my $label   = $line;
+	my $dev     = $devf   . "/" . $label;
+	my $folder  = $mountf . "/" . $label;
+	my $msg     = "$time $line";
+	print LOG "$msg STARTED\n";
+
+	if ( -e $dev )
+	{
+		my $devReal    = abs_path($dev);
+		my $mountPoint = &getMountedElsewhereFolder($dev);
+
+		$msg          .= " :: DEV $dev [$devReal] PRESENT";
+
+		print LOG "$msg\n";
+
+		if ( ! defined $mountPoint )
+		{
+			#plugged
+			$msg .= " :: NOT MOUNTED ELSEWHERE";
+			print LOG "$msg\n";
+
+			if ( -d $folder )
+			{
+				#plugged and with folder
+				#keeping alive
+				$msg    .= " :: FOLDER $folder PRESENT";
+				my $cmd1 = "touch \"$folder/0\"";
+
+				print LOG "$msg :: TOUCHING '$cmd1' ";
+				if ( $foreal ) { print LOG `$cmd1 2>&1` };
+				print LOG "\n";
+			} else {
+				#plugged and without folder
+
+				#creating folder
+				$msg    .= " :: FOLDER $folder NOT PRESENT";
+				my $cmd2 = "mkdir $folder";
+				print LOG "$msg :: CREATING FOLDER $cmd2 ";
+				#if ( $foreal ) { print LOG `$cmd2 2>&1` };
+				print LOG "\n";
+
+				#changing permission
+				my $cmd3 = "chmod $dirMod $folder";
+				print LOG "$msg :: CHANGING PERMISSION '$cmd3' ";
+				#if ( $foreal ) { print LOG `$cmd3 2>&1` };
+				print LOG "\n";
+
+				#changing owner
+				my $cmd4 = "chown $dirUsr $folder";
+				print LOG "$msg :: CHANGING OWNER '$cmd4' ";
+				#if ( $foreal ) { print LOG `$cmd4 2>&1` };
+				print LOG "\n";
+
+				#mounting folder
+				my $cmd5 = "mount $dev $folder";
+			       	print LOG "$msg :: MOUNTING '$cmd5' ";
+				#if ( $foreal ) { print LOG `$cmd5 2>&1` };
+				print LOG "\n";
+
+				#mount --make-rshared mountpoint
+				my $cmd6 = "mount --make-rshared $folder";
+			       	print LOG "$msg :: MAKING SHAREABLE '$cmd6' ";
+				if ( $foreal && $mkShr ) { print LOG `$cmd6 2>&1` };
+				print LOG "\n";
+			}
+		} else {
+			#plugged
+			#mounted elsewhere
+			$msg .= " :: MOUNTED ELSEWHERE";
+
+			#binding
+			if ( $mountPoint eq $folder ) 
+			{ 
+				print LOG "$msg :: ERROR BINDING. CIRCULAR LOGIC :: $mountPoint eq $folder : SKIPPING"; 
+				#TODO: SOLVE PROBLEM
+			} else {
+				my $cmd7   = "mount --rbind $mountPoint $folder";
+                	        print LOG "$msg :: BINDING FOLDER $mountPoint to folder '$cmd7' ";
+                        	#if ( $foreal ) { print LOG `$cmd7 2>&1` };
+	                        print LOG "\n";
+			}
+		}
+	} else {
+		$msg .= " :: DEV $dev NOT PRESENT";
+
+		if ( -d $folder )
+		{
+			$msg    .= " :: FOLDER $folder PRESENT";
+			my $cmd8 = "rmdir $folder";
+			print LOG "$msg :: DELETING FOLDER $folder '$cmd8' ";
+			#if ( $foreal ) { print LOG `$cmd8 2>&1` };
+			print LOG "\n";
+		} else {
+			print LOG "$msg :: SKIPPING\n";
+		}
+	}
+	print LOG "$time $line FINISHED\n\n", "="x20, "\n\n";
+}
+
+close CNF;
+print LOG "$time FINISHED\n\n\n\n", "*"x20, "\n\n\n\n";
+close LOG;
+
+sub getMountedElsewhereFolder
+{
+	my $device     = shift;
+	my $deviceReal = abs_path($device);
+	my @lines      = `mount`;
+
+	for (my $l = 0; $l < @lines; $l++)
+        {
+                my $line = $lines[$l];
+                if (($line =~ /^$device\s+on\s+(\S+)/) || ($line =~ /^$deviceReal\s+on\s+(\S+)/))
+		{
+			#/dev/sda7 on /home type ext4 (rw,relatime,seclabel,barrier=1,data=ordered)
+			my $mp = $1;
+			return $mp;
+		}
+        }
+
+        return undef;
+}
+
+sub mountedElsewhere
+{
+	my $device = shift;
+	my @lines  = `mount`;
+
+	for (my $l = 0; $l < @lines; $l++)
+	{
+		my $line = $lines[$l];
+		return 1 if $line =~ /$device/;
+	}
+
+	return 0;
+}
+
+1;
+

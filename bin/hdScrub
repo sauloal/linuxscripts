@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function scrub {
+  find $1 -mount -type f -exec cat '{}' > /dev/null \;
+}
+
+if [ $# -ne 1 ]
+then
+  echo "Please give a filesystem path"
+  exit $E_BADARGS
+fi
+
+echo "Btrfs-scrub script"
+echo "Checking $1, this may take a while"
+scrub $1
+echo "Scrub complete! Check dmesg for any possible errors"
+

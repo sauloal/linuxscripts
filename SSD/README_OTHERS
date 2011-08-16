@@ -1,0 +1,7 @@
+Other Setups
+http://forums.opensuse.org/install-boot-login/410763-reducing-disk-i-o-eeepc-901-a.html
+/dev/disk/by-id/ata-ASUS-PHISON_SSD_SOQ1880077-part1 / ext3 noatime,nodiratime,nobh,data=writeback,commit=90,a cl,user_xattr 1 1 
+
+/dev/disk/by-id/ata-ASUS-PHISON_SSD_SOQ2880090-part1 /home ext3 noatime,nodiratime,nobh,data=writeback,commit=90,a cl,user_xattr 1 2
+
+

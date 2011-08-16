@@ -1,0 +1,4 @@
+AuthUserFile /home/aflitos/public_html/sys/.htpasswd
+AuthName "Proxy Restricted Area"
+AuthType Basic
+Require valid-user

@@ -1,0 +1,9 @@
+cd ~
+su -c '/sbin/restorecon -R -v .ssh;
+semanage port -a -t ssh_port_t -p tcp 22
+semanage port -a -t ssh_port_t -p tcp 222
+semanage port -a -t ssh_port_t -p tcp 2222
+'
+
+
+cd -

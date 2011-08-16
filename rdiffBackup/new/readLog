@@ -1,0 +1,1 @@
+tar -Oxf $1 | less

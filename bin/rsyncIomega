@@ -1,0 +1,191 @@
+#!/usr/bin/python
+#http://linux.byexamples.com/archives/346/python-how-to-access-ssh-with-pexpect/
+import pexpect
+import subprocess
+import time
+import struct, fcntl, os, sys, signal
+import optparse
+
+
+def sigwinch_passthrough (sig, data):
+    # Check for buggy platforms (see pexpect.setwinsize()).
+    if 'TIOCGWINSZ' in dir(termios):
+        TIOCGWINSZ = termios.TIOCGWINSZ
+    else:
+        TIOCGWINSZ = 1074295912 # assume
+    s = struct.pack ("HHHH", 0, 0, 0, 0)
+    a = struct.unpack ('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ , s))
+    global global_pexpect_instance
+    global_pexpect_instance.setwinsize(a[0],a[1])
+
+def get_cmd ():	
+	exclude='--exclude .mozilla/firefox/mi5dxplw.default/Cache --exclude=.gvfs \
+	 --exclude=**/*cache*/ --exclude=**/*Cache*/ --exclude=**~ --exclude=**/*tmp*/\
+	 --exclude=/media/*/** --exclude=/mnt/*/** --exclude=**/lost+found*/ \
+	 --exclude=/var/** --exclude=/proc/** --exclude=/dev/** --exclude=/sys/** \
+	 --exclude=**/*Trash*/ --exclude=**/*trash*/'
+	
+	opts='--recursive --links --perms --times --devices --specials\
+              --executability --one-file-system  \
+              --update --human-readable'
+	
+	#--protocol=29
+	#opts='--acls'
+	#opts='--xattrs'
+	#opts='--hard-links'
+	#opts='--group --owner'
+	#opts='--archive'	
+	#opts='--compress'
+	#opts='--checksum'
+	#-a  -rlptgoD
+	#opts='--recursive --times --group --owner --perms --links -D --update --delete-after --delete-excluded'
+	#'%prog [options]'+"\n\te.g.: -d /Backups/saulo/laptop/lin/home -s /home/saulo -a 192.168.1.102 -u rsync -p pass"
+
+	usage='%prog [options]'+"\n\te.g.: -d /Backups/user/laptop/lin/home -s /home/user -a 192.168.1.102 -u rsync -p passwd"
+	parser = optparse.OptionParser(usage=usage, version='%prog 0.1b')
+	
+	compul = optparse.OptionGroup(parser, "Compulsory");
+	option = optparse.OptionGroup(parser, "Optional");
+	overwr = optparse.OptionGroup(parser, "Overwriters");
+	
+	compul.add_option('-d', '--dst', '--destiny' , action="store" , dest="dst"    , help="destination folder")
+	compul.add_option('-a', '--add', '--address' , action="store" , dest="add"    , help="destination addres")
+	compul.add_option('-p', '--pas', '--password', action="store" , dest="passw"  , help="password")
+	compul.add_option('-f', '--pfi', '--passfile', action="store" , dest="passf"  , help="password file")
+	compul.add_option('-s', '--src', '--source'  , action="store" , dest="src"    , help="source folder/file")
+	compul.add_option('-u', '--usr', '--user'    , action="store" , dest="usr"    , help="user name")
+	
+	option.add_option('-e', '--exc', '--exclude' , action="append"    , dest="exclude", help="append exclude list\n"+exclude)
+	option.add_option('-o', '--opt', '--options' , action="append"    , dest="opts"   , help="append options list\n"+opts)
+	option.add_option('-l', '--lst', '--list'    , action="store_true", dest="list"   , help="list server")
+	
+	overwr.add_option('-E', '--Exc', '--Exclude' , action="append", dest="Exclude", help="replace exclude list")
+	overwr.add_option('-O', '--Opt', '--Options' , action="append", dest="Opts"   , help="replace options")
+	
+	parser.add_option_group(compul)
+	parser.add_option_group(option)
+	parser.add_option_group(overwr)
+	
+	(options, args) = parser.parse_args()
+
+	if (( options.add == None) or ( len(options.add) == 0 )):
+		print "NO ADDRESS DEFINED"
+		parser.print_help()
+		sys.exit(2)
+	add   = options.add
+
+
+	if options.list:
+		cmd='rsync rsync://'+add
+		return cmd, ''
+	else:
+		for obl in [options.dst, options.src, options.usr]:
+			if (( obl == None) or ( len(obl) == 0 )):
+				print "COMPULSORY OPTION MISSING"
+				parser.print_help()
+				sys.exit(2)
+		
+		if (( options.passw == None ) and ( options.passf == None)):
+			print "NO PASSWORD INFORMED"
+			parser.print_help()
+                        sys.exit(2)
+
+		passw = ''
+		if ( options.passw != None ):
+			passw = options.passw
+		elif ( options.passf == None):
+			filename = options.passf
+			if os.path.isfile(filename): 
+				try:
+					f = open(filename, 'r')
+					passw =	f.read
+					f.close
+				except:
+					print "PASSWORD FILE "+filename+" DOES NOT EXISTS"
+					parser.print_help()
+					sys.exit(0)
+
+		dst   = options.dst
+		src   = options.src
+		usr   = options.usr
+		
+		if options.exclude:
+			for exc in options.exclude:
+				exclude += ' --exclude '+exc
+			
+		if options.Exclude:
+			exclude = ''
+			for exc in options.Exclude:
+				exclude += ' --exclude '+exc
+		
+		if options.opts:
+			for opt in options.opts:
+				slash = '-'
+				if len(opt) > 1:
+					slash += '-'
+				opts    += ' '+slash+opt
+		
+		if options.Opts:
+			opts = ''
+			for opt in options.Opts:
+				slash = '-'
+				if len(opt) > 1:
+					slash += '-'
+				opts += ' '+slash+opt
+
+		cmd='rsync -h --progress --stats '+opts+' '+exclude+' '+src+' rsync://'+usr+'@'+add+dst
+		return cmd, passw
+	
+command, pwd = get_cmd()
+print command
+
+#sys.exit()
+
+#print killcmd
+#subprocess.Popen(killcmd, shell=True)
+if pwd == None:
+	subprocess.Popen(cmd, shell=True)
+	sys.sleep(2)
+	print 'Finished. exiting gracifully'
+	sys.exit(0)
+else:
+	try:
+		p=pexpect.spawn(command)
+		time.sleep(1)
+		#i=p.expect([passw,'Password: ',pexpect.EOF, pexpect.TIMEOUT],1)
+		i=p.expect([pwd,'Password:', pexpect.EOF],1)
+		
+		if i == 0: # Timeout
+	        	print "timeout"
+			sys.exit(1)
+		elif i == 1 or i == 2 or i == 3:
+			print p.before # print out the result
+			print "I'm giving password",
+			p.sendline(pwd)
+			print p.after
+			print "password given"
+			#p.expect(pexpect.EOF)
+			#print 'finished'
+			#global global_pexpect_instance
+			#global_pexpect_instance = p
+			#signal.signal(signal.SIGWINCH, sigwinch_passthrough)
+			
+			#j=p.expect([pexpect.EOF])
+			#while ( j != 1 ):
+			p.interact()
+		else:
+			print "password error"
+	                print p.before
+	                print p.after
+			sys.exit(1)
+		
+		
+	except:
+		print "error"
+		print p.before
+		print p.after
+		sys.exit(1)
+		
+
+	print 'Finished. exiting gracifully'
+	sys.exit(0)

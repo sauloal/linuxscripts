@@ -1,0 +1,17 @@
+<root>
+    <genome>
+        <baseFolder>/home/saulo/Desktop/Genome	</baseFolder>
+		<addUnkown> 1				</addUnkown>
+		<autoClean> 1				</autoClean>
+	    <exclude>
+	        <folder>
+	            <array>progs/maq/run					</array>
+	            <array>progs/MUMmer3.20/out/			</array>
+	            <array>progs/MUMmer3.22/out/			</array>
+				<array>progs/NOT						</array>
+				<array>progs/slider/data/				</array>
+				<array>progs/velvet/velvet_0.7.12/OUT	</array>
+	        </folder>
+	    </exclude>
+    </genome>
+</root>

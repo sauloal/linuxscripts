@@ -1,0 +1,237 @@
+
+/*
+LAboratory Document Indexer (LADI);
+http://mkweb.bcgsc.ca/ladi
+martink@bcgsc.ca
+*/
+
+body {
+    font-family: Verdana, Tahoma, Trebuchet, sans-serif;
+}
+
+img {
+border: none;
+}
+
+a {
+color: #224acc;
+}
+
+a:hover {
+background: #dedede;
+}
+
+h1 {
+font-size: 100%;
+color: #6396ef;
+}
+
+h2 {
+font-size: 80%;
+color: red;
+}
+
+ul,li,p {
+font-size: 90%;
+}
+
+div#error {
+font-size: 70%;
+clear:both;
+font-weight: bold;
+color: red;
+padding: 0.25em 2em;
+}
+
+div#home {
+text-align: center;
+}
+
+div#home div#masthead {
+padding-top: 3em;
+}
+
+div#search div#masthead {
+clear: both;
+padding: 0.5em;
+margin: 0.5em;
+}
+
+div#home div#logo {
+padding: 3em;
+}
+div#search div#logo {
+padding: 0.25em;
+float:left;
+top:0;
+}
+
+div#slogan {
+font-size: 80%;
+}
+
+div#search div#slogan {
+display:inline;
+padding-left: 0.5em;
+font-style: italic;
+}
+
+div#home div#searchform {
+padding: 0.5em 1em;
+text-align: center;
+}
+
+div#search div#searchform {
+margin-left: 200px;
+padding-left: 0.5em;
+}
+
+div#home div#searchform div#input form input {
+display: block;
+margin: 0 auto;
+width: auto;
+}
+
+div#home div#formtext {
+padding: 1em;
+color: #224acc;
+font-weight: bold;
+font-size: 80%;
+}
+
+div#search div#formtext {
+font-size: 70%;
+margin-top: -1em;
+font-size: 90%;
+color: #666;
+}
+div#results {
+margin: 1em;
+display:block;
+}
+
+div#stats,div#endcap {
+font-size: 90%;
+background: #dedede;
+border-top: 1px solid #333;
+text-align: right;
+clear:both;
+}
+div#hits {
+position: relative;
+padding: 0.5em;
+}
+
+div.hit {
+position: relative;
+padding: 0.5em;
+border-bottom: 1px solid #ccc;
+}
+div.hitcap {
+clear:both;
+height:0;
+}
+div.hitmessages {
+position:absolute;
+right:0;
+bottom:-5px;
+padding: 0 0.5em;
+background: #fff;
+font-size:60%;
+color: #aaa;
+border: 1px solid #ccc;
+display: none;
+}
+
+div.icon {
+float: left;
+padding-right: 0.5em;
+}
+
+div.thumbnails {
+float:right;
+text-align: right;
+font-size: 80%;
+}
+div.thumbnail {
+display: inline;
+}
+
+div.snippet {
+font-size: 90%;
+}
+
+div#contactsheet {
+padding: 1em;
+}
+
+div#contactsheet div.thumbnail {
+position: relative;
+float: left;
+border: 1px solid #ccc;
+padding: 0.5em;
+margin: 0.5em;
+}
+
+div#contactsheet div.thumbnail span.thumbnailannot {
+position: absolute;
+right: 0;
+bottom: 0;
+font-size: 70%;
+color: #aaa;
+padding: 0.25em;
+}
+
+div.time {
+color: green;
+font-size: 90%;
+display: inline;
+}
+
+div.size {
+color: green;
+font-size: 90%;
+display: inline;
+padding: 0em 0.5em;
+}
+
+div.citation {
+position:relative;
+font-size:70%;
+border-left: 1px solid #355a84;
+margin: 10px 15px;
+padding-left: 20px;
+}
+div.citation div.icon {
+position:absolute;
+top: -5px;
+left: -12px;
+}
+
+div.related {
+
+}
+
+div.url,div.file,div.digest {
+font-size: 70%;
+color: #aaa;
+display: none;
+}
+
+div#home div#footer {
+font-size: 60%;
+padding: 0.25em;
+}
+
+pre {
+font-size: 90%;
+background: #eee;
+}
+
+div.docnum {
+position: absolute;
+left: -2em;
+top:0;
+font-size: 80%;
+color: #aaa;
+}

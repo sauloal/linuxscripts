@@ -1,0 +1,6 @@
+mkdir -p /dev/cgroup/cpu 2>/dev/null
+mount -t cgroup cgroup /dev/cgroup/cpu -o cpu
+mkdir -m 0777 /dev/cgroup/cpu/user 2>/dev/null
+echo "1" > /dev/cgroup/cpu/user/notify_on_release
+echo "/usr/local/sbin/cgroup_clean" > /dev/cgroup/cpu/release_agent
+

@@ -1,0 +1,63 @@
+Summary information
+===================
+Wget4web allows to add downloads to server, to view information
+about download status and to  control it in browser. The program's
+interface is look like interfaces of ReGet and Downloader for X,
+what allow to control download of many files without review Wget
+logs (but if you want to do it, you may watch them in browser window).
+Wget4web writes logs and can generate reports including name and size
+of downloaded files. You can control traffic which was got by each
+user. Users can download files without using shell (Wget4web
+use own user list) what decrease possibility of undesirable
+server usage.
+
+System requirements
+===================
+Wget4web use Wget, Perl and Web server (for example Apache).
+
+Wget4web created for OS Linux, but it can work also in Windows.
+For this purpose you can download Wget for Windows.
+
+License
+=======
+Wget4web is distributed under the GNU General Public License.
+
+Installation
+============
+Unpack wget4web-1.0.tar.gz. Copy directory wget4web in cgi-bin
+directory in your Web server. Configuration files are located
+in the directory cgi-bin/wget4web/data/ :
+
+    * info.cgi - directory paths, primary settings
+    * users.cgi - list of users. File format:
+      user_name|password[|admin]
+      For example by default register administrator Black with
+      password qwerty and user Jack with password 12345. You must
+      change this logins/passwords to yours.
+
+I recommend for work with downloaded files to create a new user
+without shell (for that write /bin/exit in shell setting) and ftp
+access. In home directory to create subdirectories files (permissions
+777), logs (permissions 755, the owner coincide with the owner of Web
+server) and tasks (permissions 755, the owner coincide with the owner
+of Web server). Then all who knows login/password of created user can
+take downloaded file on ftp and delete it (also as the other users),
+but can not change service information.
+
+Work with program
+=================
+If you setup program as stated above then for access to Wget4web
+scripts you must write:
+http://server_name/cgi-bin/wget4web/script_name.cgi
+where script_name.cgi can assume the following values:
+
+    * add.cgi - adding a new file for download. You must enter URL,
+      login and password.
+    * progress.cgi - shows download statistic
+    * admincenter.cgi - the administration center. For entering in this
+      section you must enter login and password. Here you can get
+      information about traffic and downloaded files, stop downloads
+      (user can stop only own download, administrator - all downloads).
+
+For connection with the author use e-mail wget4web@yandex.ru
+Project page: http://irodov.nm.ru/wget4web/

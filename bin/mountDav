@@ -1,0 +1,81 @@
+#!/usr/bin/perl -w
+use strict;
+use FindBin qw($Bin);
+use lib "$Bin/lib";
+use readpass;
+my $secr = new readpass();
+
+#print "Hey \"". $m->getValue("gtalk_username") . "\" ERR \"" . $m->getErr() . "\"\n"'
+##  Google Talk login credentials ##
+my $domain     = $secr->getValue("mountdav_domain");
+my $mountpoint = $secr->getValue("mountdav_mountpoint");
+my $user       = $secr->getValue("mountdav_user");
+my $pass       = $secr->getValue("mountdav_pass");
+my $epitope    = $secr->getValue("mountdav_epitope");
+my $opts       = $secr->getValue("mountdav_opts");
+my $foreal     = $secr->getValue("mountdav_foreal");
+
+my $dav = $ARGV[0];
+
+my @SERVERS;
+foreach my $s (1..39) {
+	$SERVERS[$s] = "http://s$s$domain";
+}
+
+my $RANGE   = scalar @SERVERS;
+my $number1 = int(rand($RANGE));
+my $SERVER1 = $SERVERS[$number1];
+
+print "Random Server $SERVER1";
+
+my @list;
+if ( -z "$dav" ) {
+	print "NO BUCKET GIVEN. GETTING ALL";
+	@list = `curl -u $user:$pass "$SERVER1" 2>/dev/null | perl -ne 'if (/href="(.+?)"/) {print "$dav\n"}'`
+} else {
+	print "WORKING ON BUCKET $dav";
+	@list = $dav;
+}
+
+
+my @MOUNTS=`mount`;
+
+foreach my $BUCKET (@list) {
+	my $BUCKETSHORT = $BUCKET;
+	   $BUCKETSHORT =~ s/$BUCKET/$epitope/;
+
+	my $MOUNTGREP   = `echo "@MOUNTS" | grep "$mountpoint/$BUCKETSHORT/"`;
+	if ( ! -z "$MOUNTGREP" ) {
+		#echo "MOUNTS '$MOUNTGREP'"
+		print "  UMOUNTING BUCKET $BUCKETSHORT";
+
+		my $CMD = "fusermount -u $mountpoint/$BUCKETSHORT/";
+                print "    $CMD";
+		if ( "$foreal" != "0" ) {
+			print "    RUNNING $CMD";
+			#print `$CMD`;
+		}
+	} else {
+		#echo "MOUNTS "$MOUNTPOINT/${BUCKETSHORT%/}" '$MOUNTS'"
+		print "  MOUNTING BUCKET $BUCKETSHORT";
+
+	        if ( ! -d "$mountpoint/$BUCKETSHORT" ) {
+                	print "  CREATING DIR '$mountpoint/$BUCKETSHORT'";
+        	        mkdir("$mountpoint/$BUCKETSHORT");
+	        }
+
+		my $number2 = int(rand($RANGE));
+		my $SERVER2 = $SERVERS[$number2];
+		print "    Random Server $SERVER2";
+
+		if ( -d "$mountpoint/$BUCKETSHORT" ) {
+			my $CMD = "wdfs $SERVER2/$BUCKET $mountpoint/$BUCKETSHORT -o username=$user,password=$pass,$opts";
+			print  "    $CMD";
+		        if ( "$foreal" != "0" ) {
+				print "    RUNNING $CMD";
+        	                #print `$CMD`;
+	                }
+		}
+	}
+}
+

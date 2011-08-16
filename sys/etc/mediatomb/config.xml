@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config version="2" xmlns="http://mediatomb.cc/config/2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://mediatomb.cc/config/2 http://mediatomb.cc/config/2.xsd">
+  <server>
+    <ui enabled="yes" show-tooltips="yes">
+      <accounts enabled="yes" session-timeout="30">
+        <account user="saulo" password="pass"/>
+      </accounts>
+    </ui>
+
+    <name>SAULO-NETTOP:media</name>
+    <udn>uuid:fe7b3040-3b9b-479b-8f62-31eba321c3dc</udn>
+    <home>/home/saulo/.mediatomb</home>
+    <pc-directory upnp-hide="no"/>
+    <webroot>/usr/share/mediatomb/web</webroot>
+
+    <storage caching="yes">
+      <sqlite3 enabled="yes">
+        <database-file>mediatomb.db</database-file>
+      </sqlite3>
+      <mysql enabled="no">
+        <host>localhost</host>
+        <username>saulo</username>
+        <database>saulo</database>
+      </mysql>
+    </storage>
+
+    <protocolInfo extend="yes"/>
+   <!-- <protocolInfo extend="no"/> -->
+   <!-- For PS3 support change to "yes" -->
+   <!--
+       Uncomment the lines below to get rid of jerky avi playback on the
+       DSM320 or to enable subtitles support on the DSM units
+    -->
+   <!--
+    <custom-http-headers>
+      <add header="X-User-Agent: redsonic"/>
+    </custom-http-headers>
+
+    <manufacturerURL>redsonic.com</manufacturerURL>
+    <modelNumber>105</modelNumber>
+   -->
+
+   <!-- Uncomment the line below if you have a Telegent TG100 -->
+   <!--
+       <upnp-string-limit>101</upnp-string-limit>
+   -->
+    <extended-runtime-options>
+      <mark-played-items enabled="yes" suppress-cds-updates="yes">
+        <string mode="prepend">*</string>
+        <mark>
+          <content>video</content>
+        </mark>
+      </mark-played-items>
+    </extended-runtime-options>
+
+	<tmpdir>/home/saulo/.mediatomb/tmp/</tmpdir>
+	<servedir></servedir>
+	<interface></interface>
+	<ip></ip>
+	<bookmark>mediatomb.html</bookmark>
+	<modelName>MediaTomb</modelName>
+	<modelDescription>Free UPnP AV MediaServer, GNU GPL</modelDescription>
+	<modelNumber>0.12.1</modelNumber>
+	<serialNumber>1</serialNumber>
+	<manufacturerURL>http://mediatomb.cc/</manufacturerURL>
+	<presentationURL append-to="none"></presentationURL>
+	<upnp-string-limit>-1</upnp-string-limit>
+	<port>0</port>
+	<alive>1800</alive>
+
+  </server>
+
+
+  <import hidden-files="no">
+    <scripting script-charset="UTF-8">
+      <common-script>/usr/share/mediatomb/js/common.js</common-script>
+      <playlist-script>/usr/share/mediatomb/js/playlists.js</playlist-script>
+      <virtual-layout type="builtin">
+        <import-script>/usr/share/mediatomb/js/import.js</import-script>
+      </virtual-layout>
+    </scripting>
+
+   <directory location="/share/test" mode="timed" interval="3" level="basic" recursive="yes" hidden-files="no"/>
+
+
+    <mappings>
+      <extension-mimetype ignore-unknown="yes">
+        <map from="mp3"    to="audio/mpeg"/>
+        <map from="ogg"    to="application/ogg"/>
+
+        <map from="asf"    to="video/x-ms-asf"/>
+        <map from="asx"    to="video/x-ms-asf"/>
+        <map from="wma"    to="audio/x-ms-wma"/>
+        <map from="wax"    to="audio/x-ms-wax"/>
+        <map from="wmv"    to="video/x-ms-wmv"/>
+        <map from="wvx"    to="video/x-ms-wvx"/>
+        <map from="wm"     to="video/x-ms-wm"/>
+        <map from="wmx"    to="video/x-ms-wmx"/>
+        <map from="m3u"    to="audio/x-mpegurl"/>
+        <map from="pls"    to="audio/x-scpls"/>
+        <map from="flv"    to="video/x-flv"/><!-- Uncomment the line below for D-Link DSM / ZyXEL DMA-1000 --><!-- <map from="avi" to="video/avi"/> -->
+        <map from="avi"    to="video/avi"/><!-- Uncomment the line below for PS3 divx support --><!-- <map from="avi" to="video/divx"/> -->
+        <map from="screen" to="video/screen"/> 
+        <map from="screen.avi" to="video/screen"/> 
+      </extension-mimetype>
+
+      <mimetype-upnpclass>
+        <map from="audio/*" to="object.item.audioItem.musicTrack"/>
+        <map from="video/*" to="object.item.videoItem"/>
+        <map from="image/*" to="object.item.imageItem"/>
+      </mimetype-upnpclass>
+
+      <mimetype-contenttype>
+        <treat mimetype="audio/mpeg"      as="mp3"/>
+        <treat mimetype="application/ogg" as="ogg"/>
+        <treat mimetype="audio/x-flac"    as="flac"/>
+        <treat mimetype="image/jpeg"      as="jpg"/>
+        <treat mimetype="audio/x-mpegurl" as="playlist"/>
+        <treat mimetype="audio/x-scpls"   as="playlist"/>
+        <treat mimetype="audio/x-wav"     as="pcm"/>
+        <treat mimetype="audio/L16"       as="pcm"/>
+        <treat mimetype="video/x-msvideo" as="avi"/>
+        <treat mimetype="video/screen"    as="avi"/> 
+      </mimetype-contenttype>
+    </mappings>
+
+    <online-content>
+      <YouTube enabled="yes" refresh="28800" update-at-start="no" purge-after="604800" racy-content="exclude" format="mp4" hd="no">
+        <favorites user="sauloal"/>
+        <playlists user="sauloal"/>
+        <uploads   user="sauloal"/>
+        <standardfeed feed="most_viewed"       time-range="today"/>
+        <standardfeed feed="recently_featured" time-range="today"/>
+      </YouTube>
+    </online-content>
+
+	<filesystem-charset>UTF-8</filesystem-charset>
+	<metadata-charset>UTF-8</metadata-charset>
+	<playlist-charset>UTF-8</playlist-charset>
+	<autoscan use-inotify="auto"/>
+	<library-options>
+	        <libexif>
+        	        <auxdata></auxdata>
+	        </libexif>
+        	<id3>
+	                <auxdata></auxdata>
+        	</id3>
+	</library-options>
+	<magic-file></magic-file>
+  </import>
+
+
+  <transcoding enabled="yes">
+    <mimetype-profile-mappings>
+      <transcode mimetype="video/x-flv"     using="vlcmpeg"/>
+      <transcode mimetype="application/ogg" using="vlcmpeg"/>
+      <transcode mimetype="application/ogg" using="oggflac2raw"/>
+      <transcode mimetype="audio/x-flac"    using="oggflac2raw"/>
+      <transcode mimetype="video/screen"    using="screen"/> 
+    </mimetype-profile-mappings>
+
+    <profiles>
+      <profile name="oggflac2raw" enabled="no" type="external">
+        <mimetype>audio/L16</mimetype>
+        <accept-url>no</accept-url>
+        <first-resource>yes</first-resource>
+        <accept-ogg-theora>no</accept-ogg-theora>
+        <agent command="ogg123" arguments="-d raw -f %out %in"/>
+        <buffer size="1048576" chunk-size="131072" fill-size="262144"/>
+      </profile>
+
+      <profile name="vlcmpeg" enabled="no" type="external">
+        <mimetype>video/mpeg</mimetype>
+        <accept-url>yes</accept-url>
+        <first-resource>yes</first-resource>
+        <accept-ogg-theora>yes</accept-ogg-theora>
+        <agent command="vlc" arguments="-I dummy %in --sout #transcode{venc=ffmpeg,vcodec=mp2v,vb=4096,fps=25,aenc=ffmpeg,acodec=mpga,ab=192,samplerate=44100,channels=2}:standard{access=file,mux=ps,dst=%out} vlc:quit"/>
+        <buffer size="14400000" chunk-size="512000" fill-size="120000"/>
+      </profile>
+
+	<!-- mencoder -tv driver=v4l2:alsa:adevice=hw.0:amode=2:audiorate=44100:forceaudio:immediatemode=0 tv:// -vf hqdn3d=2:2:20:20 -fps 8 -ovc lavc -oac mp3lame -o output.mkv  -->
+
+      <profile name="screen" enabled="yes" type="external">
+        <mimetype>video/mpeg</mimetype>
+        <accept-url>yes</accept-url>
+        <first-resource>yes</first-resource>
+        <accept-ogg-theora>yes</accept-ogg-theora>
+        <agent command="/share/captureScreen" arguments="%out"/>
+        <!-- <agent command="ffmpeg" arguments="-f x11grab -r 25 -s xga -i :0.0 -qscale 2 -b 4000k -maxrate 4000k -minrate 4000k -bufsize 5097k -bt 380k -threads 2 -y -vcodec mpeg2video -f mpegts %out"/> -->
+        <!-- ffmpeg -f x11grab -r 25 -s xga -i :1.0 -qscale 2 -b 4000k -maxrate 4000k -minrate 4000k -bufsize 5097k -bt 380k -threads 2 -y -vcodec mpeg2video -f mpegts - -->
+        <buffer size="14400000" chunk-size="512000" fill-size="120000"/>
+      </profile>
+
+    </profiles>
+  </transcoding>
+</config>

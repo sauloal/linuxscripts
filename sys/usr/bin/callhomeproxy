@@ -1,0 +1,51 @@
+USER="*****"
+HOST="*****.****.nu"
+LOCALIP="127.0.0.1"
+PORT=443
+LOG="/tmp/callhomeproxy.log"
+
+F1="-L $LOCALIP:3389:192.168.1.71:3389" # rdp laptop
+F2="-L $LOCALIP:2020:127.0.0.1:2020"    # squid proxy
+F3="-L $LOCALIP:2121:127.0.0.1:2121"    # music
+F4="-L $LOCALIP:8040:127.0.0.1:8040"    # vlc control
+F5="-L $LOCALIP:5905:127.0.0.1:5900"    # vnc
+F6="-L $LOCALIP:5906:127.0.0.1:5901"    # vnc
+F0="${F1} ${F2} ${F3} ${F4} ${F5} ${F6}"
+
+D0="-D 8080"                 # socks5 port
+
+O1="-o ExitOnForwardFailure=yes"
+O2="-o ConnectTimeout=2"
+O3="-o TCPKeepAlive=yes"
+O4="-o ServerAliveInterval=2"
+O5="-o ServerAliveCountMax=2"
+O6="-o ForwardX11Trusted=no"
+O7="-o ForwardX11=yes"
+O0="${O1} ${O2} ${O3} ${O4} ${O5} ${O6} ${O7} "
+
+#C0="-c arcfour,blowfish-cbc"
+#C0="-c blowfish-cbc,arcfour,idea"
+C0="-c blowfish"
+
+OP="-C2qTnNAM"
+    #C2 COMPRESSION 2
+    #q  QUIET
+    #T  DISABLE PESUDO TTY
+    #n  PREVENTS READING FROM STDIN
+    #N  DO NO EXECUTE REMOTE COMMAND
+    #A  AGENT FORWARDING
+    #M  MASTER MODE
+
+CMD="${OP} ${C0} ${O0} ${F0} ${D0} -p ${PORT} ${USER}@${HOST}"
+echo "CMD: ssh ${CMD}"
+
+nohup bash -c "while [ 1 ]; do                          
+DATE=\$(date)
+echo \"\$DATE STARTED\"        &>>${LOG}
+echo \"\$DATE CMD: ${CMD}\"    &>>${LOG}
+ssh ${CMD}                     &>>${LOG}
+echo \"\$DATE ENDED \"\`date\` &>>${LOG}
+echo \"\"                      &>>${LOG}
+echo \"\"                      &>>${LOG}
+sleep 5s  
+done;" &>/dev/null &

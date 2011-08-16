@@ -1,0 +1,1 @@
+pminst | grep -v -P "^\d" | sort | uniq > perl_installed.log

@@ -1,0 +1,4 @@
+#Min   Hr  Date    Month   WkDay               User    Command
+ 5  1   1   *   *               root    /root/bin/full-backup.sh
+ 10 2   7,14,21,28  *   *           root    /root/bin/diff-backup.sh
+ 15 3   2-6,8-13,15-20,22-27,29-31  *   *   root    /root/bin/incr-backup.sh

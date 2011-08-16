@@ -1,0 +1,274 @@
+http://74.125.77.132/search?q=cache:TEyVeyMy_Y4J:test.gentoo-wiki.com/TIP_Backup_with_cron_and_tar+tar+diff&hl=en&ct=clnk&cd=17&lr=lang_en|lang_pt|lang_es
+This is Google's cache of http://test.gentoo-wiki.com/TIP_Backup_with_cron_and_tar. It is a snapshot of the page as it appeared on 22 Sep 2008 15:23:49 GMT. The current page could have changed in the meantime. Learn more
+
+Text-only versionThese search terms are highlighted: tar diff 
+TIP Backup with cron and tar
+From Gentoo Linux Wiki
+Jump to: navigation, search
+This article is part of the Tips & Tricks series. 
+Terminals / Shells • Network • X Window System • Portage • System • Filesystems • Kernel • Other 
+
+Before you begin, an alternative to this HOWTO is to just use flexbackup. This does basically the same thing as below. See Backup 
+
+Contents
+1 Introduction 
+2 Script & Symlinks 
+3 Backup by Day of Month 
+3.1 crontab entry 
+3.2 Backup Configuration 
+3.3 Backup Script 
+4 Backup by Day of Week 
+5 Other backup methods 
+
+
+[edit] Introduction 
+This is a script for doing very simple backups with cron. I'm using it myself right now and over the course of this month I'll check my backups and make changes to the script if anything goes wrong. If anyone wants to BE BOLD and make this simpler or work better, please do. 
+
+[edit] Script & Symlinks 
+Here we create our script (empty) and symlinks. 
+
+Code: Daughter Scripts 
+cd /root/bin
+ touch backup.sh
+ chmod a+x backup.sh
+ ln -s backup.sh full-backup.sh
+ ln -s backup.sh diff-backup.sh
+ ln -s backup.sh incr-backup.sh
+
+
+
+[edit] Backup by Day of Month 
+This works well, however, the downside is that from month to month the backups will happen a different weekdays. 
+
+Simply add these lines to your crontab for the backup to be automated. 
+
+[edit] crontab entry 
+File: /etc/crontab 
+#Min   Hr  Date    Month   WkDay               User    Command
+ 5  1   1   *   *               root    /root/bin/full-backup.sh
+ 10 2   7,14,21,28  *   *           root    /root/bin/diff-backup.sh
+ 15 3   2-6,8-13,15-20,22-27,29-31  *   *   root    /root/bin/incr-backup.sh
+
+
+
+[edit] Backup Configuration 
+Modifying this configuration file changes the functionality of the backup script. 
+
+File: /root/etc/backup.conf 
+#!/bin/bash
+
+ ##########################
+ # User Defined Variables #
+ ##########################
+
+ # Put all of the directories you wish to backup in this list
+ # The format is FILESYSTEM:SHORT-NAME
+ export BACKME_UP="/home:home /var/www:www /var/lib/mysql:db /usr/local:local"
+
+
+ # You can backup to tape, over the network, or a local drive
+ export BAK_DIR=/mnt/backup
+
+ # To automatically select a full backup on the first week of the month
+ # and differential backups the rest of the month (when called with 
+ # full-backup.sh or diff-backup.sh), change this to YES. Default is NO.
+ # export AUTOSELECT_DIFF_FULL="YES"
+
+ # If you want to check if the backup directory needs to be mounted
+ # change this to YES. Default is NO.
+ export MOUNT_BAK_DIR=YES
+
+
+
+
+[edit] Backup Script 
+Simply copy/paste this script to /root/bin/backup.sh. Provided that you created the symlinks and crontab entries already, everything is set to go. 
+
+Tested and working: CoolAJ86 21:12, 30 August 2005 (GMT) 
+
+File: /root/bin/backup.sh 
+#!/bin/bash
+
+ ##########################
+ # User Defined Variables #
+ ##########################
+
+ source /root/etc/backup.conf
+
+
+
+ ###################################
+ # END USER CONFIGURABLE SECTION   #
+ ###################################
+ # Do not edit anything below this #
+ # unless you're sure you know     #
+ # what you're doing.              #
+ ###################################
+
+ # Check if the backup directory exists in fstab
+ if [[ -n "$MOUNT_BAK_DIR" && $MOUNT_BAK_DIR == "YES" && \
+        "`grep -l ${BAK_DIR} /etc/fstab`" == "/etc/fstab" ]];
+ then
+    echo "$0: Mounting backup directory.";
+    mount ${BAK_DIR}/
+    MOUNTED=YES
+ fi
+
+ # Load date into an array so we dont run it 3 times.
+ date=( $(date +"%Y %m %d") )
+ YEAR=${date[0]}
+ MONTH=${date[1]}
+ DAY=${date[2]}
+
+ mkdir -p ${BAK_DIR}/${YEAR}/${MONTH}/
+ mkdir -p ${BAK_DIR}/catalogue/${YEAR}/${MONTH}/
+
+ ########################
+ # Function Definitions #
+ ########################
+
+ # There could be a lot of customization added here.
+ diff_full () {
+   if [ $DAY -le 7 ];
+   then
+    echo "$0: Automatically selecting FULL backup.";
+    full
+   else
+    echo "$0: Automatically selecting DIFF backup.";
+    diff
+   fi
+ }
+
+ # full ()
+ # Performs full backup of specified directories
+ # Creates ${DAY}-full-${NAME}.tar and ${DAY}-full-${NAME}.list
+ # Requires: cut, tar
+ full () {
+ echo "$0: Starting full backup.";
+ 
+ for PAIR in ${BACKME_UP}; do
+    DIR=`echo $PAIR | cut -d':' -f1`
+    NAME=`echo $PAIR | cut -d':' -f2`
+
+    # Well run tar with -v and output to a file to eliminate this 'find'.
+    #find ${DIR} > ${BAK_DIR}/catalogue/${YEAR}/${MONTH}/${DAY}-full-${NAME}.list
+    tar --one-file-system -cvpf \
+    ${BAK_DIR}/${YEAR}/${MONTH}/${DAY}-full-${NAME}.tar ${DIR} \
+    > ${BAK_DIR}/catalogue/${YEAR}/${MONTH}/${DAY}-full-${NAME}.list
+ done
+ } # end full
+ 
+
+ # diff ()
+ # Performs differential backup of specified directories if full backup exists
+ # Creates ${DAY}-diff-${NAME}.tar and ${DAY}-diff-${NAME}.list
+ # Requires: cut, find, tar
+ diff () {
+ echo "$0: Starting differential backup.";
+ 
+ for PAIR in ${BACKME_UP}; do
+     DIR=`echo $PAIR | cut -d':' -f1`
+     NAME=`echo $PAIR | cut -d':' -f2`
+
+     # If no previous backup exists, do a full backup.
+     if [ ! -e ${BAK_DIR}/${YEAR}/${MONTH}/??-full-${NAME}.tar ];
+    then
+      full
+    else
+          find ${DIR} -mtime -7 -type f > \
+         ${BAK_DIR}/catalogue/${YEAR}/${MONTH}/${DAY}-diff-${NAME}.list &&
+          tar -T ${BAK_DIR}/catalogue/${YEAR}/${MONTH}/${DAY}-diff-${NAME}.list \
+           --one-file-system -cpf \
+           ${BAK_DIR}/${YEAR}/${MONTH}/${DAY}-diff-${NAME}.tar
+     fi
+ done
+ } #end diff
+ 
+
+ # incr ()
+ # Performs incremental backup of specified directories if full backup exists
+ # Creates ${DAY}-incr-${NAME}.tar and ${DAY}-incr-${NAME}.list
+ # Requires: cut, find, tar
+ incr () {
+ echo "$0: Starting incremental backup.";
+ 
+ for PAIR in ${BACKME_UP}; do
+     DIR=`echo $PAIR | cut -d':' -f1`
+     NAME=`echo $PAIR | cut -d':' -f2`
+
+     # If a differential backup has happened this month, the incremental is part of this months backup set
+     if [ ! -e ${BAK_DIR}/${YEAR}/${MONTH}/??-full-${NAME}.tar ];
+    then
+      full
+    else
+          find ${DIR} -mtime -1 -type f > ${BAK_DIR}/catalogue/${YEAR}/${MONTH}/${DAY}-incr-${NAME}.list && \
+          tar -T ${BAK_DIR}/catalogue/${YEAR}/${MONTH}/${DAY}-incr-${NAME}.list \
+            --one-file-system -cpf ${BAK_DIR}/${YEAR}/${MONTH}/${DAY}-incr-${NAME}.tar
+    fi
+ done
+ } # end incr
+
+
+ ###################################
+ # Determine how weve been called #
+ ###################################
+
+ case `basename $0 | awk -F'-' '{ print $1 }' ` in
+ "full")
+     if [[ -n "$AUTOSELECT_DIFF_FULL" && $AUTOSELECT_DIFF_FULL == "YES" ]];
+     then
+       diff_full
+     else
+       full
+     fi
+ ;;
+ "diff")
+     if [[ -n "$AUTOSELECT_DIFF_FULL" && $AUTOSELECT_DIFF_FULL == "YES" ]];
+     then
+       diff_full
+     else
+       diff
+     fi
+ ;;
+ "incr")
+     incr
+ ;;
+ esac
+
+ 
+ if [[ -n "$MOUNTED" && $MOUNTED == "YES" ]];
+ then
+    echo "$0: Unmounting backup directory.";
+    umount ${BAK_DIR}/
+ fi
+
+# Any output gets e-mailed to root
+echo 'If the above messages do not indicate failure the backup has completed successfully.'
+echo 'Please burn backup to DVD or change backup tape before you leave tonight!'
+
+
+
+[edit] Backup by Day of Week 
+What I would like it to do (but it doesn't currently do this): 
+
+Full backup at 8:00am weekly on every saturday 
+Differential backup at 8:00am dailly monday to friday 
+crontab entries
+This would be ideal, I think, but it doesn't work as expected (see 'discussions and bugs'). 
+
+[Don't see the discussions and bugs session here. I don't understand why one would want to turn on the "AUTOSELECT_DIFF_FULL" bit since cron runs different links to the script according to the schedule. When the script is executed, it can tell which link is being used (with the case), right?] 
+
+
+
+# /etc/crontab
+#Min    Hr  Date    Month   WkDay   User    Command
+5   1   1-7 *   0   root    /root/bin/full-backup.sh
+10  2   8-31    *   0   root    /root/bin/diff-backup.sh
+15  3   *   *   1-6 root    /root/bin/incr-backup.sh
+
+Suggestions for a best solution would be much appreciated. Maybe rewrite cron? Or not, lol. 
+
+[edit] Other backup methods 
+TIP Backup with cron and dar 
+
+Retrieved from "http://test.gentoo-wiki.com/TIP_Backup_with_cron_and_tar"

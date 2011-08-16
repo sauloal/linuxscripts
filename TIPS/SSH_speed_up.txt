@@ -1,0 +1,1 @@
+ssh -c arcfour,blowfish-cbc -CX HOST

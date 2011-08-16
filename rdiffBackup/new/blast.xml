@@ -1,0 +1,7 @@
+<root>
+    <blast>
+		<baseFolder>/home/saulo/Desktop/blast			</baseFolder>
+		<addUnkown> 1				 					</addUnkown>
+		<autoClean> 1									</autoClean>
+    </blast>
+</root>

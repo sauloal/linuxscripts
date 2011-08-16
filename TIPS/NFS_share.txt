@@ -1,0 +1,24 @@
+Dicas NFS Share
+
+showmount -e 127.0.0.1
+sudo mount -vvv -o udp -o nolock -t nfs 127.0.0.1:/var/www/html/results/BASIC tt
+
+ports
+rpc.lock 4001
+pdc.mountd 4002
+rpc.statd 4000
+
+share
+hosts *
+read/write 1
+allow connection from port 1024 and higher
+allow insecure locking
+sync write operations on request
+hide filesystem beneath
+treat all client users as anonymous users
+local user id 500 (user owner of the folder)
+local group id 500
+
+firewall
+open nfs4
+

@@ -1,0 +1,117 @@
+Make Cryptographed Key 
+[root@localhost log]# wpa_passphrase Guests T3mpGu3st
+                                |       |-password
+                                |------------- router name
+network={
+        ssid="Guests"
+        #psk="T3mpGu3st"
+        psk=0ac82369294797ab5e14201ac71a6255d6cfc0b4a16a5e3c4d62c0ace3fe011f
+}
+
+
+
+
+/etc/sysconfig/wpa_supplicant
+INTERFACES="-iwlan0"
+DRIVERS="-Dwext"
+
+
+
+/etc/wpa_supplicant/wpa_supplicant.conf
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=root
+
+network={
+        ssid="Guests" # router name
+    scan_ssid=1
+    proto=WPA
+    key_mgmt=WPA-PSK
+    pairwise=CCMP TKIP
+    group=CCMP TKIP WEP104 WEP40
+        #psk="T3mpGu3st" #password
+        psk=0ac82369294797ab5e14201ac71a6255d6cfc0b4a16a5e3c4d62c0ace3fe011f #password encrypted
+    priority=10
+}
+
+
+
+
+Might be useful
+#[root@localhost log]# iwconfig wlan0 ap 00:11:50:14:28:47
+[root@localhost log]# ps aux | grep wpa
+[root@localhost log]# killall wpa_supplicant
+[root@localhost log]# rm /var/run/wpa_supplicant/wlan0
+
+[root@localhost log]# chkconfig wpa_supplicant --level 2345 on
+
+[root@localhost log]# service wpa_supplicant restart
+
+[root@localhost log]# wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf -dd
+
+
+Add this line on /etc/sysconfig/network-scripts/ifcfg-wlan0
+http://www.enterprisenetworkingplanet.com/netsecur/article.php/3594946
+RATE=54Mb/s
+
+echo "iwconfig wlan0 rate 54M" >> /etc/rc.d/rc.local
+
+
+add this line on /etc/sysconfig/network-scripts/ifup-wireless
+wpa_supplicant -iwlan0 -c/etc/wpa_supplicant.conf -Bw
+killall wpa_supplicant
+
+
+
+edit the header of /etc/rc.d/init.d/wpa_supplicant from
+#!/bin/bash
+#
+# wpa_supplicant 
+#
+# chkconfig:   2345 08 88
+# description: wpa_supplicant is a WPA Supplicant for Linux, BSD and \
+#     Windows with support for WPA and WPA2 (IEEE 802.11i / RSN). Supplicant \
+#     is the IEEE 802.1X/WPA component that is used in the client stations. \
+#     It implements key negotiation with a WPA Authenticator and it controls \
+#     the roaming and IEEE 802.11 authentication/association of the wlan driver.
+# processname: wpa_supplicant
+# config:      /etc/wpa_supplicant/wpa_supplicant.conf
+#
+### BEGIN INIT INFO
+# Provides: wpa_supplicant
+# Required-Start: $local_fs
+# RRequired-Start: $local_fs messagebus
+# Required-Stop: $local_fs 
+# RRequired-Stop: $local_fs messagebus
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop wpa_supplicant
+# Description: wpa_supplicant is a tool for connecting to wireless networks
+### END INIT INFO
+
+to
+#!/bin/bash
+#
+# wpa_supplicant 
+#
+# chkconfig:   2345 08 88
+# description: wpa_supplicant is a WPA Supplicant for Linux, BSD and \
+#     Windows with support for WPA and WPA2 (IEEE 802.11i / RSN). Supplicant \
+#     is the IEEE 802.1X/WPA component that is used in the client stations. \
+#     It implements key negotiation with a WPA Authenticator and it controls \
+#     the roaming and IEEE 802.11 authentication/association of the wlan driver.
+# processname: wpa_supplicant
+# config:      /etc/wpa_supplicant/wpa_supplicant.conf
+#
+### BEGIN INIT INFO
+# Provides: wpa_supplicant
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop wpa_supplicant
+# Description: wpa_supplicant is a tool for connecting to wireless networks
+### END INIT INFO
+
+
+wpa_supplicant must appears BEFORE network in the boor process (/etc/rc.d/)
+
+dns must be configured manually; open dns is a good option 208.67.222.222 and 208.67.220.220
+

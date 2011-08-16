@@ -1,0 +1,20 @@
+<h1>Laboratory Document Indexer (LADI)</h1>
+
+<p>LADI is an adaptation of the Google Desktop Search (GDS) system which permits a client to search a remote, centralized, network-accessible GDS index. The main application of LADI is to store, index and present a portal to a centralized repository of scientific articles, and laboratory documentation. Networked clients can search the repository using a web browser, in a manner analogous to using GDS locally.
+
+<h1>What Is It Searching?</h1>
+
+<p>The following directories are indexed
+
+<ul>
+<li>/home/samba/public/pdf
+<li>/home/samba/public/Presentations
+</ul>
+
+<p>To index your own PDFs, create a directory within /home/samba/public/pdf and either copy your PDFs there or link to your PDF repository.
+
+<h1>How It Works</h1>
+
+<p>LADI is composed of two parts. First, a script running on the web server (GDSWEBHOST) provides LADI's interface to the outside world - this is the script you interact with. The web server is a Linux machine (webx440 currently). Second, a script bridges communication between the web server and the GDS system, which is installed on a wiWindows machine (GDSHOST). This script runs on the GDSHOST and talks to the GDSWEBHOST component using XML-RPC.
+
+<p>More details are available <a href="http://mkweb.bcgsc.ca/remotegoogledesktop/?advanced">here</a>.

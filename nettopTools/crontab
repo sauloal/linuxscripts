@@ -1,0 +1,5 @@
+*/20 * * * * /usr/share/prey/prey.sh &> /dev/null
+49 5 * * * /etc/webmin/cron/tempdelete.pl #Delete Webmin temporary files
+@weekly /etc/webmin/backup-config/backup.pl 1267152878338
+*/5 * * * * /usr/bin/checkNet 1>/dev/null 2>/dev/null >/dev/null
+*/3 * * * * /usr/bin/hdusbkeepalive 1>/dev/null 2>/dev/null >/dev/null

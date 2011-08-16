@@ -1,0 +1,697 @@
+#!/usr/bin/perl
+
+=pod
+
+=head1 NAME
+
+ladi - LAboratory Document Indexer CGI client
+
+=head1 SYNOPSIS
+
+This script is mean to be exected through the web server.
+
+=head1 DESCRIPTION
+
+=head1 HISTORY
+
+=over
+
+=item * 0.30 (24 Mar 2006)
+
+Code refresh. Verified that LADI works with GDS v3.
+
+=item * v0.20 (29 Nov 2005)
+
+Adapted to Google Desktop Search v2. Code cleanup.
+
+=item * v0.11 (19 Aug 2005)
+
+GSC-wide release.
+
+=item * v0.10 (20 Jun 2005)
+
+Initial public release. Beyond the basic document search and retrieval functionality, other features in this release are
+
+=over 2
+
+=item
+
+pubmed interface
+
+=item  
+
+page thumbnails and contact sheet
+
+=back
+
+=back
+
+=head1 BUGS
+
+=head1 AUTHORS
+
+=over
+
+=item Martin Krzywinski (martink@bcgsc.ca)
+
+=item Stephen Montgomery (smontgom@bcgsc.ca)
+
+Interface to pubmed.
+
+=item Steven Jones (sjones@bcgsc.ca)
+
+Architecture.
+
+=back
+
+=head1 SEE ALSO
+
+DKNA, Soogle
+
+=cut
+
+################################################################
+#
+# LAboratory Document Indexer
+#
+#   _           _ _
+#  | |         | (_) 0.30
+#  | | __ _  __| |_
+#  | |/ _` |/ _` | |
+#  | | (_| | (_| | |
+#  |_|\__,_|\__,_|_|
+#
+#
+# Martin Krzywinski (martink@bcgsc.ca)
+# Stephen Montgomery (smontgom@bcgsc.ca)
+# Steven Jones (sjones@bcgsc.ca)
+#
+# Genome Sciences Center
+# www.bcgsc.ca
+#
+################################################################
+
+use strict;
+use FindBin;
+use Config::General;
+use File::Basename;
+use File::Path;
+use Digest::MD5 qw(md5_hex);
+use Data::Dumper;
+use Date::Calc qw(Add_Delta_DHMS Month_to_Text);
+use IO::File;
+use Time::HiRes qw(gettimeofday tv_interval);
+use HTML::TreeBuilder;
+use Storable;
+use CGI qw/:all/;
+use CGI::Carp qw(fatalsToBrowser);
+use LWP::Simple;
+
+#use lib "/home/martink/export/prod/webx440";
+use XML::Parser;
+use XML::Simple;
+use XML::Parser::EasyTree;
+use Frontier::Client;
+
+use lib "$FindBin::RealBin";
+use lib "$FindBin::RealBin/../lib";
+use lib "$FindBin::RealBin/lib";
+
+use gds_xml_parse;
+use Bio::Biblio;
+
+my $conf = load_configuration();
+process_configuration($conf);
+my @errors;
+
+start_html();
+
+if($conf->{client_ip_filter} && $ENV{REMOTE_ADDR} !~ /$conf->{client_ip_filter}/) {
+  print qq{<p>no access</p>};
+  print qq{</body></html>};
+  exit;
+}
+
+print_header();
+print_masthead();
+print_searchform();
+
+if(param("keywords") eq "about") {
+
+  print qq{<div id="results">};
+  print qq{<div id="stats">about ladi</div>};
+  print qq{<div id="pagelinks1"></div>};
+
+  my $about_file = dirname($ENV{SCRIPT_FILENAME}) . "/" . $conf->{aboutfile};
+  open(F,$about_file);
+  my @about_text = <F>;
+  close(F);
+
+  print join("\n",@about_text);
+
+  print qq{<div id="pagelinks2"></div>};
+  print qq{<div id="endcap">$conf->{endcap}</div>};
+  print qq{<div id="footer"></div>};  
+
+} elsif (param("contactsheet")) {
+  my $digest = param("contactsheet");
+  my @thumbnails = glob( sprintf("%s/%s/%s/*.png", dirname($ENV{SCRIPT_FILENAME}),$conf->{thumbnails},$digest));
+  my $num_pages = @thumbnails;
+
+  my $rtree_file = sprintf("%s/%s/%s/%s.rtree",
+			   dirname($ENV{SCRIPT_FILENAME}),
+			   $conf->{citations},$digest,$digest);
+  my $rtree = retrieve($rtree_file);
+
+  print qq{<div id="results">};
+  print qq{<div id="stats">$num_pages pages</div>};
+  print qq{<div id="pagelinks1"></div>};
+
+  print qq{<div id="hits">};
+  print qq{<div class="hit">};
+  print qq{<div class="icon"><img src="$conf->{icons}/$rtree->{icon}"></div>};
+  print qq{<div class="title"><a href="$rtree->{url}">$rtree->{title}</a></div>};
+  print qq{<div class="snippet">$rtree->{snippet}</div>};
+  print qq{<div class="time">},join(" ",$rtree->{date}[2],Month_to_Text($rtree->{date}[1]),$rtree->{date}[0]),qq{</div>};
+  print qq{<div class="size">$rtree->{size} bytes</div>};
+  print qq{<div class="digest">$rtree->{digest}</div>};
+  print qq{<div class="url">$rtree->{url}</div>};
+  print qq{<div class="file">$rtree->{filename}</div>};
+  print qq{</div>};
+
+  print qq{<div id="contactsheet">};
+  for my $page ( 0..@thumbnails-1 ) {
+    my $file = $thumbnails[$page];
+    my $url = sprintf("%s/%s/%s",$conf->{thumbnails},$digest,basename($file));
+    print qq{<div class="thumbnail"><a href="$rtree->{url}#page=$page"><img src="$url"></a><span class="thumbnailannot">page $page</span></div>};
+  }
+  print qq{</div>};
+  print qq{</div>};
+  print qq{</div>};
+
+  print qq{<div id="pagelinks2"></div>};
+  print qq{<div id="endcap">$conf->{endcap}</div>};
+  print qq{<div id="footer"></div>};  
+
+} elsif (param("s")) {
+
+  my (@results,$num_results);
+
+  my $xml = remote_search(start=>param("start"));
+  $xml = global_replace($xml);
+  my $tree = make_tree($xml);
+  $num_results += $tree->{attrib}{count};
+  if(ref $tree->{content} eq "ARRAY") {
+    push(@results,@{$tree->{content}});
+  } else {
+    push(@results,$tree->{content});
+  }
+  if(@errors) {
+    print qq{<div id="error">},join(" ",@errors),qq{</div>};
+  }
+
+  @results = map {make_result_tree($_)} @results;
+  
+  # at this point, each entry in the @results array is a hash with the following keys
+  #'icon' => '/pdf.gif',
+  #'snippet' => 'with an unpatched gcc (data alignment of double...'
+  #'flags' => '2',
+  #'event_id' => '5147',
+  #'cache_url' => 'http://127.0.0.1:4664/redir?url=http%3A%2F%2F127%2E0%2E0%2E1%3A4664%2Fcache%3Fevent%5Fid%3D5147%26schema%5Fid%3D8%26q%3Dtest%26s%3Dr%2DuNG1pvQmvvwqIC0C6Ybwy3sTs&src=1&schema=8&start=0&s=ArhPuK0V7b5lAW-Ng6Xt0CHxYSU',
+  #'time' => '127777623769680000',
+  #'doc_id' => '5147',
+  #'url' => '//Ladi/ladi_repository/user3.pdf',
+  #'category' => 'file',
+  #'title' => "PostgreSQL 7.1 User\x{2019}s Guide"
+
+  print qq{<div id="results">};
+  my $start = param("start") || 1;
+  my $end   = $start+$conf->{num_per_page}-1;
+  print qq{<div id="stats">};
+  print qq{showing },$start,qq{-},$end;
+  print qq{ | };
+  if($start > 1) {
+    print qq{<a href="?s=},param("s"),qq{&start=},$start-$conf->{num_per_page},qq{">&lt;&lt;prev</a>};
+    print qq{ };
+  }
+  print qq{<a href="?s=},param("s"),qq{&start=},1,qq{">top</a>};
+  print qq{ };
+  print qq{<a href="?s=},param("s"),qq{&start=},$start+$conf->{num_per_page},qq{">>>next</a>};
+  print qq{ | };
+  print qq{$num_results results</div>};
+  print qq{<div id="pagelinks1"></div>};
+  
+  print qq{<div id="hits">};
+
+  my $rtree_idx = $start-1;
+  #for my $rtree (sort {$b->{time} cmp $a->{time}} @results) {
+  for my $rtree (@results) {
+    $rtree_idx ++;
+
+    my @hitmessages; # diagnostic messages, displayed optionally
+    apply_drive_mappings($rtree);
+    calculate_time($rtree);
+    adjust_icon($rtree);
+
+    #printpre(Dumper($rtree));
+
+    $rtree->{digest} = md5_sum($rtree->{filename});
+    $rtree->{size}   = -s $rtree->{filename};
+
+    push(@hitmessages,$rtree->{digest});
+
+    # store the result tree ($rtree) in a file to allow access to gds document data 
+    # by document digest. this file is used for the page thumbnail contact sheet, for example,
+    # for which we want to know, given the digest, the title, snippet etc of the document without
+    # asking gds for this information
+
+    my $rtree_file = sprintf("%s/%s/%s/%s.rtree",
+			     dirname($ENV{SCRIPT_FILENAME}),
+			     $conf->{citations},$rtree->{digest},$rtree->{digest});
+    mkpath(dirname($rtree_file)) unless -d dirname($rtree_file);
+    if(! -e $rtree_file) {
+      store($rtree,$rtree_file);
+      push(@hitmessages,"store result");
+    }
+
+    ################################################################
+    # we'll lookup this document in pubmed. two lookups are performed
+    #
+    # 1. canonical document citation based on search of document title
+    # 2. if 1 is successful, lookup of related documents, as computed by pubmed
+    #
+    # in (1) pubmed is searched with processed document title
+    #
+    # word1 [ti] AND word2 [ti] ...
+    #
+
+    # remove trailing word.. from the title
+    # e.g. Experiences with Flocks of Shee..
+    #        becomes
+    #      Experiences with Flocks of
+    (my $title_stripped = $rtree->{title}) =~ s/\w*\.\.\s*$//g;
+    $title_stripped =~ s/<.*?>//g;
+    # collapse spaces
+    $title_stripped =~ s/\s+/ /g;
+    # extract individual words from the stripped title
+    my @title_words = grep($_, split(/\b/,$title_stripped));
+    # remove all non-word and non-digit characters from each word
+    @title_words = grep($_, map { s/[^-\w\d]//g; $_ } @title_words);
+    # remove stop words
+    my @title_words_stripped = grep(! $conf->{stopwords_entries}{lc $_}, @title_words);
+    push(@hitmessages,"words ". join("",map { "[$_]" } @title_words_stripped));
+    push(@hitmessages,"stripped title '".join(" ",@title_words_stripped)."'");
+
+    # load existing citation or attempt to fetch a new citation (no citation found
+    # or existing citation is stale)
+    #
+    # see include_citations, fetch_new_citations, citation_expiry_age in ladi.conf
+
+    my ($citation,$related) = ({},{});
+
+    if($conf->{include_citations}) {
+
+      my $citation_file = sprintf("%s/%s/%s/%s.citation",
+				  dirname($ENV{SCRIPT_FILENAME}),
+				  $conf->{citations},$rtree->{digest},$rtree->{digest});
+
+      # before checking the citation, we look whether the title of this document
+      # suggests that an incorrect title has been parsed. such is the case for
+      # ppt presentations (titles can be "slide 1", "title", "powerpoint presentation")
+      # or some publications (e.g. "bioinformatics application note")
+
+      my $null_title = $conf->{stoptitles_entries}{lc $title_stripped};
+      if(! $null_title) {
+	if(-e $citation_file && -M $citation_file < $conf->{citation_expiry_age}) {
+	  $citation = retrieve($citation_file);
+	  push(@hitmessages,"ret cit");
+	} elsif ($conf->{fetch_new_citations}) {
+	  my $eutils = new Bio::Biblio(-access=>"eutils");
+	  # the final pubmed query is - [ti] indicates that the word should appear in the title
+	  #
+	  # word1 [ti] AND word2 [ti] AND ... AND wordN [ti]
+	  my $pubmed_query = join(" AND ",map { lc $_ . " [ti] "} @title_words_stripped);
+	  push(@hitmessages,"ret query '$pubmed_query'");
+	  my $biblio = $eutils->find($pubmed_query);
+	  if($biblio) {
+	    while($biblio->has_next) {
+	      my $string   = $biblio->get_next;
+	      $citation = XMLin($string);
+	      push(@hitmessages,"pubmed yes");
+	      last;
+	    }
+	  }
+	  push(@hitmessages,"pubmed no");
+	}
+	# we're going to store the citation, even if it is not defined (no corresponding
+	# pubmed entry exists). this prevents repeated failed pubmed checks for documents
+	# that will never have a citation
+	#
+	# citations which are empty hashes correspond to documents without a pubmed citation
+	# 
+	# therefore, test $citation->{PubmedArticle} to verify that a citation exists, rather than
+	# testing $citation.
+	if(! -e $citation_file || -M $citation_file > $conf->{citation_expiry_age}) {
+	  store($citation,$citation_file);
+	  push(@hitmessages,"store cit");
+	}
+	push(@hitmessages,"cit empty") unless $citation->{PubmedArticle};
+      } else {
+	push(@hitmessages,"null title");
+      }
+
+      # based on word frequencies, pubmed computes related citations for each entry. as far as
+      # I can tell (mk) there is no API to this functionality through Bio::Biblio. however,
+      # pubmed offers the elink.fcgi web interface to extract related citations (e.g. xml) for 
+      # a given PMID.
+      if(! $null_title) {
+	if($citation->{PubmedArticle} && $conf->{numrelated}) {
+	  my $related_file = sprintf("%s/%s/%s/%s.related",
+				     dirname($ENV{SCRIPT_FILENAME}),
+				     $conf->{citations},$rtree->{digest},$rtree->{digest});
+	  if(-e $related_file && -M $related_file <= $conf->{citation_expiry_age}) {
+	    $related = retrieve($related_file);
+	    push(@hitmessages,"ret rel");
+	  } else {
+	    my $pmid = $citation->{PubmedArticle}{MedlineCitation}{PMID};
+	    #printpre($pmid);
+	    my $related_result = get(sprintf("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pubmed&id=%d&cmd=neighbor&retmode=xml",$pmid));
+	    my $related_list = XMLin($related_result);
+	    #printpre(Dumper($related_list));
+	    # related PMIDs extracted from the result provided by elink.fcgi
+	    my @pmidr;
+	    if(ref $related_list->{LinkSet}{LinkSetDb} eq "ARRAY") {
+	      @pmidr = (map { $_->{Id} } @{$related_list->{LinkSet}{LinkSetDb}[0]{Link}})[0 .. $conf->{numrelated}-1];
+	    } else {
+	      @pmidr = (map { $_->{Id} } @{$related_list->{LinkSet}{LinkSetDb}{Link}})[0 .. $conf->{numrelated}-1];
+	    }
+	    push(@hitmessages,"rel lookup" . join(",",@pmidr));
+	    # related citations provided by efetch.fcgi
+	    my $related_list_result = get(sprintf("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=%s&retmode=xml",join(",",@pmidr)));
+	    $related = XMLin($related_list_result);
+	    store($related,$related_file);
+	    push(@hitmessages,"store rel");
+	  }
+	}
+      }
+    }
+
+    # we have the result tree, and citation data, if available - time now to display things
+
+    print qq{<div class="hit">};
+
+    # show thumbnails, if they exist
+    # these images are precomputed
+
+    print qq{<div class="thumbnails">};
+    my $seen_thumbnails;
+    for my $i ( 0 .. $conf->{num_thumbs}-1 ) {
+      my $url = sprintf("%s/%s/%s-%03d.png",$conf->{thumbnails},$rtree->{digest},$rtree->{digest},$i);
+      my $thumbnailfile = dirname($ENV{SCRIPT_FILENAME}) . "/". $url;
+      next unless -e $thumbnailfile;
+      my $pagenum = $i+1;
+      my $img_aux;
+      if($rtree->{filename} =~ /\.ppt$/i) {
+	$img_aux = " width=200 hspace=5 ";
+      }
+      print qq{<div class="thumbnail"><a href="$rtree->{url}#page=$pagenum"><img $img_aux src="$url"></a></div>};
+      $seen_thumbnails++;
+    }
+    if($seen_thumbnails) {
+      print qq{<br><a href="?contactsheet=$rtree->{digest}">show all pages</a>};
+    }
+    print qq{</div>};
+
+    print qq{<div class="docnum">$rtree_idx</div>};
+    print qq{<div class="icon"><img src="$conf->{icons}/$rtree->{icon}"></div>};
+    print qq{<div class="title"><a href="$rtree->{url}">$rtree->{title}</a></div>};
+    print qq{<div class="snippet">$rtree->{snippet}</div>};
+    print qq{<div class="time">},join(" ",$rtree->{date}[2],Month_to_Text($rtree->{date}[1]),$rtree->{date}[0]),qq{</div>};
+    print qq{<div class="size">$rtree->{size} bytes</div>};
+    print qq{<div class="digest">$rtree->{digest}</div>};
+    print qq{<div class="url">$rtree->{url}</div>};
+    print qq{<div class="file">$rtree->{filename}</div>};
+
+    if($citation->{PubmedArticle}) {
+      my @citation_fields;
+      if(ref $citation->{PubmedArticle}{MedlineCitation}{Article}{AuthorList}{Author} eq "ARRAY") {
+	push(@citation_fields,sprintf("%s, %s.",
+				      $citation->{PubmedArticle}{MedlineCitation}{Article}{AuthorList}{Author}[0]{LastName},
+				      $citation->{PubmedArticle}{MedlineCitation}{Article}{AuthorList}{Author}[0]{Initials}));
+	push(@citation_fields,"et al.");
+      } else {
+	push(@citation_fields,sprintf("%s, %s.",
+				      $citation->{PubmedArticle}{MedlineCitation}{Article}{AuthorList}{Author}{LastName},
+				      $citation->{PubmedArticle}{MedlineCitation}{Article}{AuthorList}{Author}{Initials}));
+      }
+      push(@citation_fields,
+	   sprintf("%d.",$citation->{PubmedArticle}{MedlineCitation}{Article}{Journal}{JournalIssue}{PubDate}{Year}));
+      push(@citation_fields,
+	   sprintf("<a href='%s%d'>%s</a>",
+		   "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=",$citation->{PubmedArticle}{MedlineCitation}{PMID},$citation->{PubmedArticle}{MedlineCitation}{Article}{ArticleTitle}));
+      push(@citation_fields,
+	   sprintf("%s",$citation->{PubmedArticle}{MedlineCitation}{MedlineJournalInfo}{MedlineTA}));
+      push(@citation_fields,
+	   sprintf("%d:%s",
+		   $citation->{PubmedArticle}{MedlineCitation}{Article}{Journal}{JournalIssue}{Volume},
+		   $citation->{PubmedArticle}{MedlineCitation}{Article}{Pagination}{MedlinePgn}));
+      print qq{<div class="citation"><div class="icon"><img src="icon/cit-canonical.png"></div>},join(" ",@citation_fields),"</div>";
+    }
+
+    if($related->{PubmedArticle}) {
+      my @related = @{$related->{PubmedArticle}};
+      print qq{<div class="citation"><div class="icon"><img src="icon/cit-related.png"></div>};
+      for my $i (0..$conf->{numrelated}-1) {
+	my $article = $related[$i];
+	print sprintf(qq{<div class="related">%s. <a href="%s%d">%s</a> %s </div>},
+		      $article->{MedlineCitation}{Article}{Journal}{JournalIssue}{PubDate}{Year},
+		      "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=",
+		      $article->{MedlineCitation}{PMID},
+		      $article->{MedlineCitation}{Article}{ArticleTitle},
+		      $article->{MedlineCitation}{MedlineJournalInfo}{MedlineTA});
+
+      }
+      print qq{</div>};
+    }
+    print qq{\n<div class="hitcap">&nbsp;</div>};
+    print qq{\n<div class="hitmessages">},join(" :: ",@hitmessages),qq{</div>};
+    print qq{\n</div>\n};
+  }
+  print qq{</div>};
+  
+  print qq{<div id="pagelinks2"></div>};
+  print qq{<div id="endcap">$conf->{endcap}</div>};
+  print qq{</div>};
+  print qq{<div id="footer"></div>};  
+} else {
+  print qq{<div id="footer">$conf->{endcap}</div>};
+}
+
+print qq{</body></html>};
+
+sub md5_sum {
+    my $file = shift;
+    my $digester = Digest::MD5->new();
+    my $fh = IO::File->new($file);
+    return undef unless $fh;
+    $digester->addfile($fh);
+    return $digester->hexdigest;
+}
+
+sub make_result_tree {
+  my $result = shift;
+  my $tree;
+  for my $tok (@{$result->{content}}) {
+    $tree->{$tok->{name}} = $tok->{content}[0]{content};
+  }
+  return $tree;
+}
+
+sub apply_drive_mappings {
+  my $rtree = shift;
+  my @rules = ref $conf->{drivemaps}{map} eq "ARRAY" ? @{$conf->{drivemaps}{map}} : ($conf->{drivemaps}{map});
+  $rtree->{filename} = $rtree->{url};
+  # apply 
+  for my $map (@rules) {
+    $rtree->{url} =~ s/$map->{from_rx}/$map->{to_url}/i;
+    $rtree->{filename} =~ s/$map->{from_rx}/$map->{to_file}/i;
+  }
+}
+
+sub adjust_icon {
+  my $rtree = shift;
+  $rtree->{icon} =~ s/gif$/png/;
+  if(! -e dirname($ENV{SCRIPT_FILENAME}) . "/$conf->{icons}/$rtree->{icon}") {
+    $rtree->{icon} = "default.png";
+  }
+}
+
+sub calculate_time {
+  my $rtree = shift;
+  $rtree->{time} =~ s/0{7}$//;
+  $rtree->{date} = [ Add_Delta_DHMS(1601,1,1,0,0,0,int($rtree->{time} / 86400),0,0,$rtree->{time} % 86400) ];
+}
+
+sub global_replace {
+  my $text = shift;
+  my @grules = ref $conf->{globalreplacement}{rule} eq "ARRAY" ? @{$conf->{globalreplacement}{rule}} : ($conf->{globalreplacement}{rule});
+  for my $rule (@grules) {
+    $text =~ s/$rule->{from_rx}/$rule->{to}/g;
+  }
+  return $text;
+}
+
+sub make_tree {
+  my $xml = shift;
+  my $parser= XML::Parser->new(Style=>"EasyTree");
+  my $xmlref;
+  eval {
+    $xmlref = $parser->parse($xml)->[0];
+  };
+  push(@errors,"XML PARSE ERROR") if $@;
+  return $xmlref;
+}
+
+################################################################
+# contact remote LADI Frontier server with a request to search
+# for files
+
+sub remote_search {
+  my %args = @_;
+  print "<pre>\n";
+  my $client = Frontier::Client->new(url=>$conf->{rpcurl},debug=>0);
+  my $answer;
+  my $start = $args{start};
+  $start = 1 unless $start !~ /\D/;
+  eval { $answer = $client->call($conf->{rpcfunction},
+				 server=>$conf->{server},
+				 gdsurl=>$conf->{gdsurl},
+				 port=>$conf->{port},
+				 siteid=>$conf->{siteid},
+				 query=>param("s"),
+				 start=>$start,
+				 num=>$conf->{num_per_page},
+				 format=>$conf->{format}) };
+  print "</pre>\n";
+  if($@) {
+    push(@errors,"XML-RPC ERROR in Frontier::Client ::  $@");
+  }
+  return $answer;
+}
+
+sub load_configuration {
+    $XML::Parser::EasyTree::Noempty=1;
+    my $conffile = dirname($ENV{SCRIPT_FILENAME}) . "/etc/ladi.conf";
+    my $configurator = new Config::General(-ConfigFile=>$conffile,
+					   -AllowMultiOptions=>"yes",
+					   -LowerCaseNames=>1,
+					   -AutoTrue=>1);
+    my %conf = $configurator->getall;
+    while($conf{rpcurl} =~ /_(.+?)_/g) {
+      my $key = $1;
+      $conf{rpcurl} =~ s/_${key}_/$conf{lc $key}/g;
+    }
+    return \%conf;
+  }
+
+sub print_header {
+    print qq{<div id="header"></div>};
+}
+
+sub print_masthead {
+    print qq{<div id="masthead">};
+    print qq{<div id="logo">};
+    if(param("s") || param("contactsheet") || param("keywords") eq "about") {
+      print qq{<a href="?"><img src="$conf->{logo_small}"></a>};
+    } else {
+      print qq{<a href="?"><img src="$conf->{logo}"></a>};
+    }
+    print qq{</div>};
+    print qq{<div id="slogan">$conf->{slogan}</div>};
+    print qq{</div>};
+}
+
+sub print_searchform {
+    print qq{<div id="searchform">};
+    print qq{<div id="input">};
+    print start_form;
+    print textfield(-name=>"s",-size=> param("s") ? 15 : 40),submit(-name=>"search",-label=>"Search Remote Desktop");
+    print end_form;
+    print qq{</div>};
+    print qq{<div id="formtext">$conf->{formtext}</div>};
+    print qq{</div>};
+}
+
+=pod
+
+=item process_configuration()
+
+Replace all _VAR_ with the actual value of VAR in the file. For example, in the pair
+
+ RPCPORT = 4664
+ RPCURL  = http://_SERVER_:_RPCPORT_/RPC2
+
+RPCURL will have its _RPCPORT_ string replaced with 4664
+
+Also load up stop words and stop titles. Stop words are words removed from titles. Stop titles are titles for which no thumbnail or citations are loaded
+
+=cut
+
+sub process_configuration {
+    my $conf = shift;
+    for my $key (keys %$conf) {
+	next if ref($key);
+	while($conf->{$key} =~ /_(.+?)_/g) {
+	    my $id = $1;
+	    if($conf->{$id}) {
+		$conf->{$key} =~ s/_${id}_/$conf->{$id}/g;
+	    }
+	}
+    }
+    if(-e $conf->{stopwords}) {
+	open(S,$conf->{stopwords});
+	$conf->{stopwords_entries} = {};
+	while(<S>) {
+	    chomp;
+	    next if /\s*\#/;
+	    my @words = grep($_, split(" ",$_));
+	    next unless @words;
+	    map { $conf->{stopwords_entries}{lc $_}++ } @words;
+	}
+    }
+    if(-e $conf->{stoptitles}) {
+	open(S,$conf->{stoptitles});
+	$conf->{stoptitles_entries} = {};
+	while(<S>) {
+	    chomp;
+	    s/^\s*//;
+	    s/\s*$//;
+	    $conf->{stoptitles_entries}{lc $_}++;
+	  }
+      }
+  }
+
+sub start_html {
+
+    print header;
+    print <<"END";
+<html>
+<link rel="stylesheet" href="$conf->{css}" type="text/css">
+<meta name="keywords" content="$conf->{keywords}">
+<title>$conf->{title}</title>
+<body>
+END
+
+if(param("s") || param("contactsheet") || param("keywords") eq "about") {
+    print qq{<div id="search">};
+} else {
+    print qq{<div id="home">};
+}
+
+}
+
+#print "<pre>",Dumper($conf),"</pre>";
+
+sub printpre {
+  print qq{<pre>},@_,qq{</pre>};
+}

@@ -1,0 +1,60 @@
+sub leftmenu{
+print qq(
+   <TABLE>  
+   <TR><TD>
+   <B>
+   <P><A HREF="admincenter.cgi">Summary&nbsp;statistic</A>
+   <P><A HREF="adminfiles.cgi">Downloaded&nbsp;files</A>
+   <P><A HREF="admindel.cgi">Delete&nbsp;files</A>
+   </B>
+   </TD></TR>
+   </TABLE>
+);
+}
+
+sub userlogin{
+print qq(
+   <CENTER>
+   <form action="admincenter.cgi" method="post">
+   <input type=hidden name="action" value="login">
+   <TABLE>
+   <TR>
+   <TD>Login</TD><TD><input type=text name="login" size=15></TD>
+   </TR>
+   <TR>
+   <TD>Password</TD><TD><input type=password name="password" size=15></TD>
+   </TR>
+   </TABLE>
+   <input type=submit value="Enter">
+   </form>
+   <p>You must use cookie for work in admincenter.
+   </CENTER>
+);   
+}
+
+sub testuser{
+   my $name = $_[0];
+   my $password = $_[1];
+   my (
+      $nametemp,
+      $passwordtemp,
+   );
+   my $user = "guest";
+   open (USERS, "data/users.cgi");
+   while (<USERS>){
+      chomp();
+      ($nametemp, $passwordtemp, $status) = split(/\|/);
+      if (($nametemp eq $name) && ($passwordtemp eq $password)){
+         if ($status eq "admin"){
+            $user = "admin";
+         }
+         else{
+            $user = "user";
+         }
+      }
+   }
+   close(USERS);
+   return ($user);
+}   
+
+1;

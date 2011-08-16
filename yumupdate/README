@@ -1,0 +1,3 @@
+install Youri::Package::RPM RPM2 RPM4 Parse::RPM::Spec Meta::Tool::Rpm MegaDistro::RpmMaker::Build LCFG::Build::Utils::RPM LCFG::Build::Tool::RPM CPANPLUS::Dist::RPM
+install RPM::Make 
+install Pod::Text

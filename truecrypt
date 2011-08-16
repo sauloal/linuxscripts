@@ -1,0 +1,9 @@
+groupadd truecrypt
+gpasswd -a saulo truecrypt
+
+echo '
+# Allow users of truecrypt group to run truecrypt as root.
+Defaults:%truecrypt !requiretty
+%truecrypt ALL=(root) NOPASSWD:/usr/bin/truecrypt
+' >> /etc/sudoers
+

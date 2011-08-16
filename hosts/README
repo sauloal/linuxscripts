@@ -1,0 +1,6 @@
+yum install denyhosts
+
+
+cat /var/log/secure* | grep sshd | grep -v saulo > /var/log/secure-all
+denyhosts.py -f secure-all
+denyhosts-control -start

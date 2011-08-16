@@ -1,0 +1,3 @@
+#!/bin/bash
+BUCKET=$1
+/home/saulo/bin/s4cmd --recursive ls $BUCKET 2>&1 | perl -ne '$dir = "'$BUCKET'"; $_ = substr($_, index($_, $dir)); $_ =~ s/$dir//; print'

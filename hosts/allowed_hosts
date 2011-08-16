@@ -1,0 +1,10 @@
+#/var/lib/denyhosts/allowed-hosts
+
+# We mustn't block localhost
+127.0.0.1
+#intranet
+192.168.1.0/24
+#open cbs
+192.87.37.21
+#open srv-fungi
+192.87.138.47

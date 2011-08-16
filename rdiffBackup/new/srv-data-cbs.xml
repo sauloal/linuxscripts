@@ -1,0 +1,9 @@
+<root>
+    <srv-data-cbs>
+		<preExec>   mount -t cifs //srv-data1/DataCBS/FuncDiv/Saulo -o username=s.aflitos,password=pwd <srv-data-cbs.baseFolder/></preExec>
+		<posExec>   umount <srv-data-cbs.baseFolder/>	</posExec>
+		<baseFolder>/mnt/srv-data-cbs/ 			</baseFolder>
+		<addUnkown> 1				 	</addUnkown>
+		<autoClean> 1					</autoClean>
+    </srv-data-cbs>
+</root>

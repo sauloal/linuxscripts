@@ -1,0 +1,30 @@
+BASEDIR=/home/saulo/cbs-linux
+ACT=$1
+
+if [ -n "$ACT" ]; then
+  echo WORKING
+  if [ $ACT == "mount" ]; then
+    echo MOUNT
+    mount --bind /var/rolf             ${BASEDIR}/rolf/
+    mount --bind /usr/rolf2            ${BASEDIR}/rolf2/
+    mount -t cifs //srv-data1/Data/Home/s.aflitos -o username=s.aflitos,password=pwd ${BASEDIR}/srv-data1/
+    mount --bind /mnt/ssd/probes       ${BASEDIR}/probes/
+    mount --bind /mnt/ssd/wc           ${BASEDIR}/wc/
+    #mount --bind /home/saulo/Desktop/  ${BASEDIR}/Desktop/
+    ##mount --bind /var/rolf ${BASEDIR}/rolf/
+  fi
+
+  if [ $ACT == "umount" ]; then
+    echo UMOUNT
+    umount ${BASEDIR}/rolf/
+    umount ${BASEDIR}/rolf2/
+    umount ${BASEDIR}/srv-data1/
+    umount ${BASEDIR}/probes/
+    umount ${BASEDIR}/wc/
+    #umount ${BASEDIR}/Desktop/
+    ##umount ${BASEDIR}/rolf/
+  fi
+
+else
+  echo PLEASE SEND A COMMAND: EITHER mount OR umount
+fi

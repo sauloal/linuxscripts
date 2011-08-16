@@ -1,0 +1,12 @@
+INFILE=$1
+
+#INFILE=${INFILE// /\\ }
+
+OUTFILE=$INFILE
+OUTFILE=${OUTFILE%.rmvb}.avi
+echo "INPUT '$INFILE' OUTPUT '$OUTFILE'"
+
+
+#mencoder "$INFILE" -oac mp3lame -lameopts preset=128 -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=1200 -ofps 25 -of avi -o "$OUTFILE"
+#mencoder "$INFILE"  -ovc divx -oac mp3lame -lameopts preset=128 -of avi -o "$OUTFILE"
+mencoder "$INFILE" -oac mp3lame -lameopts preset=128 -ovc xvid -xvidencopts fixed_quant=4 -of avi -o "$OUTFILE"

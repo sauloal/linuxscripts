@@ -1,0 +1,25 @@
+
+LAboratory Document Indexer (LADI)
+
+Martin Krzywinski*, Stephen Montgomery, Steven Jones
+Genome Sciences Center (www.bcgsc.ca)
+Vancouver BC Canada
+
+* martink@bcgsc.ca
+
+For documentation and updates see http://mkweb.bcgsc.ca/ladi
+
+Quick Install
+
+0. install GDS on GDSHOST (http://desktop.google.com)
+1. untar ladi-x.xx.
+2. copy contents of bin/ to GDSHOST (Windows machine running GDS)
+3. start server.pl on GDSHOST
+4. copy contents of web/ to GDSWEBHOST (web server providing interface to LADI)
+5. configure LADI (web/etc/ladi.conf) including GDS IP address, site ID and repository file mapping
+
+
+
+
+
+

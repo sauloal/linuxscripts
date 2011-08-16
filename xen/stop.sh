@@ -1,0 +1,1 @@
+xm shutdown wxp64

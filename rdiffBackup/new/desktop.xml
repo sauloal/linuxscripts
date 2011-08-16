@@ -1,0 +1,91 @@
+<root>
+    <desktop>
+        <baseFolder>/home/saulo/Desktop	</baseFolder>
+		<addUnkown> 1			</addUnkown>
+		<autoClean> 1			</autoClean>
+	    <include>
+			<folder>
+				<array>Taxonomy		</array>
+				<array>aws			</array>
+				<array>benchmark	</array>
+				<array>ZIPS			</array>
+				<array>fm			</array>
+				<array>aws			</array>
+			</folder>
+			<ext>
+				<array>.pl			</array>
+			</ext>
+	    </include>
+        <exclude>
+			<ext>
+				<array>.img 	</array>
+				<array>.had 	</array>
+				<array>~	 	</array>
+			</ext>
+            <folder>
+		<array>Baralga-1.4.4-SNAPSHOT</array>
+		<array>blast                 </array>
+		<array>BOINC                 </array>
+		<array>caos                  </array>
+		<array>eclipse               </array>
+		<array>genesis               </array>
+		<array>Genome                </array>
+		<array>jets3t-0.7.1          </array>
+		<array>kruise                </array>
+		<array>liveusb-creator-3.9   </array>
+		<array>minfedora             </array>
+		<array>mrbayes               </array>
+		<array>pdb                   </array>
+		<array>pdfinfo               </array>
+		<array>rolf                  </array>
+		<array>Taxonomy              </array>
+		<array>ZIPS                  </array>
+            </folder>
+        </exclude>
+        <byFolder>
+            <array>
+                <folder>aws</folder>
+				<exclude>
+				    <folder>
+						<array>ec2-api-tools-1.3-41620</array>
+				    </folder>
+				</exclude>
+            </array>
+            <array>
+                <folder>fm</folder>
+    	            <exclude>
+					    <ext>
+							<array>.had</array>
+					    </ext>
+					    <folder>
+							<array>input</array>
+					    </folder>
+    	            </exclude>
+    	    </array>
+            <array>
+                <folder>minfedora</folder>
+                <exclude>
+                    <ext>
+                        <array>.pl</array>
+                    </ext>
+                </exclude>
+            </array>
+            <array>
+                <folder>rolf</folder>
+                <exclude>
+                    <ext>
+                        <array>.pl</array>
+                    </ext>
+                </exclude>
+            </array>
+            <array>
+                <folder>Share</folder>
+                <exclude>
+                    <ext>
+                        <array>.pl</array>
+                    </ext>
+                </exclude>
+            </array>
+        </byFolder>
+    </desktop>
+</root>

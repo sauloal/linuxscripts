@@ -1,0 +1,14 @@
+More Tunning
+http://www.overclock.net/hard-drives-storage/475114-howto-get-most-out-your-ssd.html
+3. If your motherboard or laptop supports it, enable write back caching in the BIOS. After you've enabled it in the BIOS, run the following command as root to enable write-back caching in Linux:
+
+Code:
+hdparm -W1 /dev/sdaReplace sda with the identifier for your SSD. If you have conventional hard drives you can disable write-back caching and use the default (write-through) by running this command as root:
+
+Code:
+hdparm -W1 /dev/sdbAs above, replace sdb with the identifier for your conventional drives. Both of these commands will only work until the next reboot. If you want the changes to last after a reboot, add the commands you just typed in to the file /etc/rc.local. You'll need root privileges to edit it.
+
+4. The default disk I/O scheduler in Linux is designed for conventional platter-based disks, and really doesn't work well with SSD's. To use a different scheduler for the drive, you can add the following command to your /etc/rc.local file:
+
+Code:
+echo noop > /sys/block/sdb/queue/scheduler

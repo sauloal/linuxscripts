@@ -1,0 +1,49 @@
+<root>
+    <cgh>
+        <baseFolder>/home/saulo/Desktop/blast/cgh 	</baseFolder>
+		<addUnkown> 1								</addUnkown>
+		<autoClean> 1								</autoClean>
+        <include>
+            <ext>
+                <array>.pl 	</array>
+                <array>.pm 	</array>
+                <array>.r 	</array>
+                <array>.sh 	</array>
+            </ext>
+            <folder>
+                <array>query_exp 		</array>
+                <array>query_fasta		</array>
+                <array>xalan-j_2_7_1 	</array>
+            </folder>
+        </include>
+        <exclude>
+            <ext>
+                <array>.conf	</array>
+                <array>.xml		</array>
+                <array>.blast	</array>
+                <array>.html	</array>
+                <array>.txt		</array>
+                <array>.csv		</array>
+                <array>.log		</array>
+				<array>.tar		</array>
+				<array>~ 		</array>
+            </ext>
+        </exclude>
+        <byFolder>
+            <array>
+                <folder>fasta</folder>
+                <exclude>
+                    <ext>
+                        <array>.log</array>
+                    </ext>
+                </exclude>
+                <include>
+                    <ext>
+                        <array>.fasta</array>
+                    </ext>
+                </include>
+            </array>
+        </byFolder>
+    </cgh>
+
+</root>

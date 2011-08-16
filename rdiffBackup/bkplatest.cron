@@ -1,0 +1,4 @@
+#/etc/cron.dayly/bkplatest.cron
+/bkp_latest/mkBkp.pl   &>/bkp_latest/mkBkp_`date +"%Y_%m_%d_%H%M"`.log &
+/bkp_latest_b/mkBkp.sh 
+twitter Backup performed master. as scheduled.

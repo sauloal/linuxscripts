@@ -1,0 +1,61 @@
+[saulo@SRV-FUNGI rolf]$ time ./probe_extractor_actuator.pl Linkprobes/dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml 
+NEEDS MET
+	1248881385	ACTUATOR: RUNNING OVER FILE /home/saulo/Desktop/rolf/input/Cryptococcus_gattii_WM276_GENES.fasta BY Linkprobes/dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml
+	1248881385	ACTUATOR: MAKING FRAGMENTS FOR Cryptococcus_gattii_WM276_GENES.fasta CP000290_CGB_E1250W_Eukaryotic_translation_initiation_factor_subunit__eIF3____putative_261185_264131[0] (2947bp)
+	1248881385	ACTUATOR: 		EXPORTING SQL FILE /mnt/ssd/probes/input/Cryptococcus_gattii_WM276_GENES.fasta.0.1.F.sql
+	1248881385	ACTUATOR: 		964 PROBES INSERTED IN 0 s (964 probes/s) FOR CP000290_CGB_E1250W_Eukaryotic_translation_initiation_factor_subunit__eIF3____putative_261185_264131 FWD
+	1248881385	ACTUATOR: 		EXPORTING SQL FILE /mnt/ssd/probes/input/Cryptococcus_gattii_WM276_GENES.fasta.0.1.R.sql
+	1248881385	ACTUATOR: 		948 PROBES INSERTED IN 0 s (948 probes/s) FOR CP000290_CGB_E1250W_Eukaryotic_translation_initiation_factor_subunit__eIF3____putative_261185_264131 REV
+	1248881385	ACTUATOR: 	SEQUENCE Cryptococcus_gattii_WM276_GENES.fasta CP000290_CGB_E1250W_Eukaryotic_translation_initiation_factor_subunit__eIF3____putative_261185_264131 ANALIZED IN 0 s
+		1912 PROBES GENERATED (1912 probes/s)
+		1912 PROBES INSERTS GENERATED IN 0 s (1912 probes inserts/s)
+		2947 BP ANALYSED (2947 bp/s)
+
+	1248881385	ACTUATOR: FILE /home/saulo/Desktop/rolf/input/Cryptococcus_gattii_WM276_GENES.fasta BY Linkprobes/dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml ANALIZED WITH:
+ LIG GC% ] 45,60 [, M13 GC% ] 35,60 [, LIG TM  ] 75,82 [, M13 TM  ] 75,90 [, LENGTH LIG ( 13 ), LENGTH M13 ( 10 )
+done
+
+real	0m0.557s
+user	0m0.526s
+sys		0m0.018s
+
+
+[saulo@SRV-FUNGI Linkprobes]$ time java -jar mlpaextractor.jar dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml 
+	MAIN: ARGUMENTS GIVEN:
+	MAIN: 	dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml
+	MAIN: LOADING SEQUENCE FILEdumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml
+	MAIN: file dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml has the correct extension, going on
+	MAIN: file dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml exists, going on
+	MAIN: file dumps/Cryptococcus_gattii_WM276_GENES.fasta_0.xml has been loaded, going on
+		MKFID            0
+		fullFastaFile    /home/saulo/Desktop/rolf/input/Cryptococcus_gattii_WM276_GENES.fasta
+		sequenceType     6
+		xml              <MKFID>0</MKFID><MKFfile>Crypt (...) 5</taxonID><variant>0</variant>
+		dumpDir          /mnt/ssd/probes/dumps
+		variant          0
+		id_short         CP000290_CGB_E1250W_Eukaryotic_translation_initiation_factor_subunit__eIF3____putative_261185_264131
+		MKFfile          Cryptococcus_gattii_WM276_GENES.fasta
+		taxonID          367775
+		sqlDir           /mnt/ssd/probes/input
+		id_long          CP000290_CGB_E1250W_Eukaryotic_translation_initiation_factor_subunit__eIF3____putative_261185_264131
+		outDir           /mnt/ssd/probes
+		sequence         AGCAATGTCCTTCTTCGCAAAGCTCCAGGG (...) GGACAACTATGGGGAGAAGAGTGACGGCGCA
+		fastaFile        Cryptococcus_gattii_WM276_GENES.fasta
+	MAIN: Setup seems ok, proceding
+		output dir /mnt/ssd/probes exists, going on
+		output dir /mnt/ssd/probes/java/ exists, going on
+		A: 740; C: 778; G: 751; T: 678; N: 0; TOTAL:2947 vs LENGTH: 2947
+	MAIN: sequence is valid. continuing
+		NEW: 680 NOT: 41304
+		NEW: 656 NOT: 41546
+	MAIN: run valid. continuing
+		ALL CHEKED. RUNNING!
+	MAIN: successifully runned and 1334 result restrieved
+		EXPORTING TO /mnt/ssd/probes/java/Cryptococcus_gattii_WM276_GENES.fasta_0.xml
+		EXPORTING TO /mnt/ssd/probes/java/Cryptococcus_gattii_WM276_GENES.fasta_0.tab
+	MAIN: MLPA EXTRACTED SUCCESSIFULLY
+
+real	0m0.895s
+user	0m1.460s
+sys	0m0.125s
+

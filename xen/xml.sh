@@ -1,0 +1,1 @@
+virsh dumpxml wxp64 > xen-winxp.xml

@@ -1,0 +1,8 @@
+tc qdisc add dev wlan0 root sfq perturb 10
+
+#tc qdisc del  dev eth1 parent  xyz:
+
+#It should do the trick.... However if you dont remember it's parent but if you  can
+#afford to delete the whole qdisc  ( everything from root) try
+
+#tc qdisc del root dev eth1

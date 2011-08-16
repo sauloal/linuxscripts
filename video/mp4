@@ -1,0 +1,19 @@
+IN=$1
+mencoder $IN -ovc x264 -oac mp3lame -of lavf -o $IN.mp4
+
+#NORMAL DEF
+#mencoder "$1" -ovc x264 -x264encopts \
+#pass=1:turbo:bitrate=2000:frameref=1:analyse=all:me=umh:subme=4:trellis=1:bframe​s=1:subq=4:mixed_refs:weight_b:no_fast_pskip:direct_pred=auto:mixed_refs:nr=200 \
+#-vf harddup -oac copy -o /dev/null
+
+#mencoder "$1" -ovc x264 -x264encopts \
+#pass=2:bitrate=2000:frameref=3:analyse=all:me=umh:subme=6:trellis=1:bframes=1:su​bq=6:mixed_refs:weight_b:no_fast_pskip:direct_pred=auto:mixed_refs:nr=200 \
+#-vf harddup -oac copy -o "$1.avi"
+
+#HIDEF
+#mencoder "$1" -ovc x264 -x264encopts \
+pass=1:turbo:bitrate=4000:frameref=1:analyse=all:me=umh:subme=4:trellis=1:bframe​s=1:subq=4:mixed_refs:weight_b:no_fast_pskip:direct_pred=auto:mixed_refs:nr=200 \
+#-vf harddup -oac copy -o /dev/null
+#mencoder "$1" -ovc x264 -x264encopts pass=2:bitrate=4000:frameref=4:analyse=all:me=umh:subme=7:trellis=2:bframes=1:su​bq=7:mixed_refs:weight_b:no_fast_pskip:direct_pred=auto:mixed_refs:nr=200 \
+#-vf harddup -oac copy -o "$1.avi"
+

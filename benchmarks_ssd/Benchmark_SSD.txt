@@ -1,0 +1,191 @@
+SSD - NEW - NO INDEX (3Mb inserts)
+	14297694 bp on 496 s [ 28826 bp/s ]
+	Candida_albicans_sc5314_CONTIGS.fasta
+	real	8m16.290s
+	user	19m31.226s
+	sys		0m1.993s
+
+	14416413 bp on 453 s [ 31824 bp/s ]
+	Candida_albicans_wo1_CONTIGS.fasta
+	real	7m33.370s
+	user	19m38.293s
+	sys		0m3.711s
+
+	TOTAL
+	real	15m49.942s
+	user	39m9.535s
+	sys		0m5.714s
+
+	select * from complete: 12.2068
+	INDEX SEQUENCE: 1330-1339
+
+SSD - NEW - INDEX - (1MB INSERTS)
+	Candida_albicans_sc5314_CONTIGS.fasta
+	real	13m2.437s
+	user	19m25.045s
+	sys		0m2.346s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 1459 s [ 9881 bp/s ]
+	real	24m18.367s
+	user	19m21.143s
+	sys		0m3.058s
+
+	TOTAL
+	real	37m21.293s
+	user	38m46.203s
+	sys		0m5.419s
+
+SSD - NEW - NO INDEX - (1MB INSERTS) - new fstab
+	Candida_albicans_sc5314_CONTIGS.fasta
+	14297694 bp on 490 s [ 29179 bp/s ]
+	real	8m10.209s
+	user	19m18.957s
+	sys		0m1.655s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 448 s [ 32179 bp/s ]
+	real	7m28.266s
+	user	19m28.048s
+	sys		0m1.761s
+
+SSD - NEW - INDEX - (1MB INSERTS) - new fstab + hd hack
+	Candida_albicans_sc5314_CONTIGS.fasta
+	14297694 bp on 764 s [ 18714 bp/s ]
+	real	12m44.284s
+	user	19m22.422s
+	sys		0m2.699s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 1357 s [ 10624 bp/s ]
+	real	22m36.280s
+	user	18m58.265s
+	sys		0m2.700s
+
+	TOTAL
+	real	35m20.872s
+	user	38m20.701s
+	sys		0m5.413s
+
+	select * from complete: 11.19
+
+SSD - NEW - INDEX - (3MB INSERTS) - new fstab + hd hack + output to file
+	Candida_albicans_sc5314_CONTIGS.fasta
+	14297694 bp on 424 s [ 33721 bp/s ]
+	real	7m4.297s
+	user	19m12.655s
+	sys		0m1.798s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 335 s [ 43034 bp/s ]
+	real	5m34.706s
+	user	19m24.572s
+	sys		0m1.509s
+
+	TOTAL
+	real	12m39.258s
+	user	38m37.241s
+	sys		0m3.318s
+
+	SQL		1m25.443s
+	SQL(paralel)	1m07
+
+
+SSD - OLD - (5000 inserts)
+	Candida_albicans_sc5314_CONTIGS.fasta
+	14297694 bp on 747 s [ 19140 bp/s ]
+	real	12m27.559s
+	user	20m46.466s
+	sys		0m27.838s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 1151 s [ 12525 bp/s ]
+	real	19m10.252s
+	user	21m5.867s
+	sys		0m27.836s
+
+	OPTMIZING 
+	real	3m45.846s
+
+	TOTAL
+	real	35m23.801s
+	user	41m52.345s
+	sys		0m55.687s
+
+	SELECT * FROM v_originalFinal
+
+
+
+
+
+
+HDD - NEW - NO INDEX (3Mb inserts)
+	Candida_albicans_sc5314_CONTIGS.fasta
+	14297694 bp on 486 s [ 29419 bp/s ]
+	real	8m6.290s
+	user	19m15.206s
+	sys		0m1.936s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 448 s [ 32179 bp/s ]
+	real	7m28.242s
+	user	19m32.098s
+	sys		0m2.038s
+
+	real	15m34.707s
+	user	38m47.317s
+	sys		0m3.989s
+
+	select * from complete: 12.2068
+	INDEX SEQUENCE: 1630-1637
+
+HDD - NEW - INDEX (1Mb inserts)
+	Candida_albicans_sc5314_CONTIGS.fasta
+	14297694 bp on 758 s [ 18862 bp/s ]
+	real	12m38.480s
+	user	19m22.343s
+	sys		0m4.063s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 1224 s [ 11778 bp/s ]
+	real	20m24.746s
+	user	19m41.430s
+	sys		0m5.984s
+
+	INDEX
+	real	0m0.474s
+	user	0m0.006s
+	sys		0m0.007s
+
+	TOTAL
+	real	33m3.793s
+	user	39m3.789s
+	sys		0m10.062s
+
+	select * from complete: 11.19
+
+
+HDD - OLD - (5000 INSERTS)
+	Candida_albicans_sc5314_CONTIGS.fasta
+	14297694 bp on 698 s [ 20484 bp/s ]
+	real	11m37.992s
+	user	20m44.745s
+	sys		0m26.412s
+
+	Candida_albicans_wo1_CONTIGS.fasta
+	14416413 bp on 882 s [ 16345 bp/s ]
+	real	14m41.952s
+	user	20m58.630s
+	sys		0m27.641s
+	
+	OPTMIZING
+	real	3m23.461s
+	user	0m0.008s
+	sys		0m0.004s
+
+	TOTAL
+	real	29m43.484s
+	user	41m43.392s
+	sys		0m54.066s
+
+

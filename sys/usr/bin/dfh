@@ -1,0 +1,31 @@
+#!/bin/bash
+df -h | perl -MTerm::ANSIColor -ne '
+chomp; 
+if ( $_ =~ /(\s+(\d+)\%)/ ) 
+{ 
+    $re = $1; 
+    $num = $2; 
+    $er = sprintf("%s %3d"."%s", " [" . "|"x(int(($num)+.5)) . "."x(int(((100-$num))+.5)) . "]", $num,"%"); 
+    $_ =~ s/$re/$er/; 
+    $color = "white"; 
+    if ($num > 50) 
+    { 
+        $color = "green"; 
+    }; 
+    if ($num > 70) 
+    { 
+        $color = "yellow"; 
+    }; 
+    if ($num > 90) 
+    { 
+        $color = "red"; 
+    }; 
+    print color $color; 
+    print $_, "\n";
+} else { 
+    print $_, "\n";
+} 
+END 
+{
+    print color "reset";
+}'

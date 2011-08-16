@@ -1,0 +1,16 @@
+#https://launchpad.net/wiican
+
+yum install avahi-qt4 qt-config qt-creator qt-devel google-gadgets-qt dbus-qt3 qt3 qt bluez bluez-libs bluez-libs-devel glibc.i686 glibc.x86_64 glibc-devel.i686 glibc-static.i686 glibc-static.x86_64 glibc-utils.x86_64 wiican python-ply python-gudev dbus-python python-gconf python-gobject python-gtksourceview2 python-gudev pygtk pyxdg gnome-bluetooth udev gnome-python2-gconf pygtk2 pywebkitgtk pygtk2-devel python-gtkextra dbus-python python-gconf python-gobject python-gtksourceview2 python-gudev pygtk pyxdg gnome-bluetooth udev pygobject2 pygobject2-devel gtk+ gtk+-devel
+
+python setup.py install
+
+cp -ar data/icons/* /usr/share/icons/default
+
+cp /usr/share/wiican/*.ui /usr/bin/
+
+echo 'wiican-service &
+wiican'> /usr/bin/wii
+
+chmod +x wii
+
+

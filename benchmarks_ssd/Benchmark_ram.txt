@@ -1,0 +1,313 @@
+[saulo@SRV-FUNGI rolf]$ ./probe_run.pl 
+62 FILES IN TAXONOMIC INDEX
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+PLEASE EXECUTE
+time ./run.sh
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[saulo@SRV-FUNGI rolf]$ ./run.sh
+::::::::::::::::::::::::::::::::::::::::
+RUNNING OVER 41 FILES:
+	Bovine_papillomavirus_type_1_complete_genome.fasta
+	Bovine_papillomavirus_type_2_complete_genome.fasta
+	Candida_albicans_sc5314_CONTIGS.fasta
+	Candida_albicans_wo1_CONTIGS.fasta
+	Candida_dubliniensis_CD36_CHROMOSSOMES.fasta
+	Candida_glabrata_CBS138_CHROMOSSOMES.fasta
+	Common_chimpanzee_papillomavirus_1_complete_genome.fasta
+	Deer_papillomavirus_complete_genome.fasta
+	European_elk_papillomavirus_complete_genome.fasta
+	HUMAN_CELLULAR_DNA_HUMAN_PAPILLOMA_VIRUS_TYPE_68_PROVIRAL_DNA.fasta
+	HUMAN_PAPILLOMA_VIRUS_ORF_E6_ORF_E7_ORF_E1_ORF_E2_ORF_E4_ORF.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_10_HPV10_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_11_HPV11_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_12_HPV12_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_13_HPV13_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_16_HPV16_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_18_HPV18_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_26_HPV26_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_31_HPV31A_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_33_HPV33_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_35H_HPV35H_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_35_HPV35_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_39_HPV39_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_40_HPV40_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_44_HPV44_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_45_HPV45_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_51_HPV51_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_52_HPV52_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_53_HPV53_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_54_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_56_HPV56_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_59_COMPLETE_VIRAL_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_61_HPV61_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_66_HPV66_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_6B_HPV6B_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_70_COMPLETE_GENOME.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_72_E6_E7_E1A_E1B_E2_E4_L2_AND_L1.fasta
+	HUMAN_PAPILLOMA_VIRUS_TYPE_73_E6_E7_E1_E2_E4_L2_AND_L1_GENES.fasta
+	Ovine_papillomavirus_1_complete_genome.fasta
+	Ursus_maritimus_papillomavirus_type_1_complete_genome.fasta
+	Western_roedeer_papillomavirus_1_complete_genome.fasta
+::::::::::::::::::::::::::::::::::::::::
+
+
+....................
+OPTIMIZING
+....................
+Table	Op	Msg_type	Msg_text
+probe.organism	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe.probe	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe.coordinates	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe2.organism	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe2.probe	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe2.coordinates	optimize	status	OK
+
+real	0m0.112s
+user	0m0.004s
+sys	0m0.008s
+####################
+RUNNING FILE 1 OUT OF 41	Bovine_papillomavirus_type_1_complete_genome.fasta
+####################
+RUNNING OVER FILE input/Bovine_papillomavirus_type_1_complete_genome.fasta
+MAKING FRAGMENTS FOR input/Bovine_papillomavirus_type_1_complete_genome.fasta gi|9627056|ref|NC_001522.1| Bovine papillomavirus - 1, complete genome[0] (7945bp)
+116 LINES LOADED
+		1890 PROBES ADDED IN 1s (1889 probes/s)
+		ADDING 1890 COORDINATES
+		1890 COORDINATES ADDED IN 0s (18900000 coords/s)
+		1880 PROBES ADDED IN 0s (18800000 probes/s)
+		ADDING 1880 COORDINATES
+		1880 COORDINATES ADDED IN 0s (18800000 coords/s)
+	SEQUENCE input/Bovine_papillomavirus_type_1_complete_genome.fasta gi|9627056|ref|NC_001522.1| Bovine papillomavirus - 1, complete genome ANALIZED IN 1s
+	3770 PROBES GENERATED (3769probes/s)
+	7945 BP ANALYSED (7944bp/s)
+1 SEQUENCES ON FILE input/Bovine_papillomavirus_type_1_complete_genome.fasta LIG GC% ] 45,60 [, M13 GC% ] 35,60 [, LIG TM  ] 75,82 [, M13 TM  ] 75,90 [, LENGTH LIG ( 13 ), LENGTH M13 ( 10 )
+done
+7945 bp on 2 s [ 3973 bp/s ]
+
+real	0m2.560s
+user	0m1.147s
+sys	0m0.111s
+********************
+FINISH RUNNING FILE 1 OUT OF 41	Bovine_papillomavirus_type_1_complete_genome.fasta
+********************
+
+
+
+
+####################
+RUNNING FILE 6 OUT OF 41	Candida_glabrata_CBS138_CHROMOSSOMES.fasta
+####################
+RUNNING OVER FILE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|29570601|ref|NC_004691.1| Candida glabrata mitochondrion, complete genome[0] (20063bp)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295397|ref|NC_005967.1| Candida glabrata CBS 138 chromosome A, complete sequence[1] (485192bp)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295398|ref|NC_005968.1| Candida glabrata strain CBS138 chromosome B complete sequence[2] (502101bp)
+		19 PROBES ADDED IN 0s (190000 probes/s)
+		ADDING 19 COORDINATES
+		19 COORDINATES ADDED IN 0s (190000 coords/s)
+		34 PROBES ADDED IN 0s (340000 probes/s)
+		ADDING 34 COORDINATES
+		34 COORDINATES ADDED IN 0s (340000 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|29570601|ref|NC_004691.1| Candida glabrata mitochondrion, complete genome ANALIZED IN 1s
+	53 PROBES GENERATED (52probes/s)
+	20063 BP ANALYSED (20060bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295399|ref|NC_006026.1| Candida glabrata strain CBS138 chromosome C complete sequence[3] (558804bp)
+		62618 PROBES ADDED IN 57s (1098 probes/s)
+		ADDING 62618 COORDINATES
+		66062 PROBES ADDED IN 52s (1270 probes/s)
+		ADDING 66062 COORDINATES
+		62618 COORDINATES ADDED IN 5s (12523 coords/s)
+		66062 COORDINATES ADDED IN 5s (13212 coords/s)
+		75848 PROBES ADDED IN 57s (1330 probes/s)
+		ADDING 75848 COORDINATES
+		75848 COORDINATES ADDED IN 7s (10835 coords/s)
+		62524 PROBES ADDED IN 47s (1330 probes/s)
+		ADDING 62524 COORDINATES
+		66078 PROBES ADDED IN 51s (1295 probes/s)
+		ADDING 66078 COORDINATES
+		62524 COORDINATES ADDED IN 5s (12504 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295398|ref|NC_005968.1| Candida glabrata strain CBS138 chromosome B complete sequence ANALIZED IN 163s
+	125142 PROBES GENERATED (767probes/s)
+	502101 BP ANALYSED (3080bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295400|ref|NC_006027.1| Candida glabrata strain CBS138 chromosome D complete sequence[4] (651701bp)
+		66078 COORDINATES ADDED IN 4s (16519 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295397|ref|NC_005967.1| Candida glabrata CBS 138 chromosome A, complete sequence ANALIZED IN 165s
+	132140 PROBES GENERATED (800probes/s)
+	485192 BP ANALYSED (2940bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295401|ref|NC_006028.1| Candida glabrata strain CBS138 chromosome E complete sequence[5] (687501bp)
+		76286 PROBES ADDED IN 54s (1412 probes/s)
+		ADDING 76286 COORDINATES
+		76286 COORDINATES ADDED IN 7s (10897 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295399|ref|NC_006026.1| Candida glabrata strain CBS138 chromosome C complete sequence ANALIZED IN 187s
+	152134 PROBES GENERATED (813probes/s)
+	558804 BP ANALYSED (2988bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295402|ref|NC_006029.1| Candida glabrata strain CBS138 chromosome F complete sequence[6] (927101bp)
+		82950 PROBES ADDED IN 51s (1626 probes/s)
+		ADDING 82950 COORDINATES
+		82950 COORDINATES ADDED IN 5s (16589 coords/s)
+		84688 PROBES ADDED IN 62s (1365 probes/s)
+		ADDING 84688 COORDINATES
+		84688 COORDINATES ADDED IN 3s (28228 coords/s)
+		102033 PROBES ADDED IN 79s (1291 probes/s)
+		ADDING 102033 COORDINATES
+		102033 COORDINATES ADDED IN 7s (14575 coords/s)
+		82892 PROBES ADDED IN 65s (1275 probes/s)
+		ADDING 82892 COORDINATES
+		82892 COORDINATES ADDED IN 7s (11841 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295400|ref|NC_006027.1| Candida glabrata strain CBS138 chromosome D complete sequence ANALIZED IN 210s
+	165842 PROBES GENERATED (789probes/s)
+	651701 BP ANALYSED (3103bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295403|ref|NC_006030.1| Candida glabrata strain CBS138 chromosome G complete sequence[7] (992211bp)
+		85499 PROBES ADDED IN 63s (1357 probes/s)
+		ADDING 85499 COORDINATES
+		85499 COORDINATES ADDED IN 5s (17099 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295401|ref|NC_006028.1| Candida glabrata strain CBS138 chromosome E complete sequence ANALIZED IN 214s
+	170187 PROBES GENERATED (795probes/s)
+	687501 BP ANALYSED (3212bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295404|ref|NC_006031.1| Candida glabrata strain CBS138 chromosome H complete sequence[8] (1050361bp)
+		101998 PROBES ADDED IN 87s (1172 probes/s)
+		ADDING 101998 COORDINATES
+		101998 COORDINATES ADDED IN 8s (12749 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295402|ref|NC_006029.1| Candida glabrata strain CBS138 chromosome F complete sequence ANALIZED IN 284s
+	204031 PROBES GENERATED (718probes/s)
+	927101 BP ANALYSED (3264bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295405|ref|NC_006032.1| Candida glabrata CBS 138 chromosome I, complete sequence[9] (1089401bp)
+		116874 PROBES ADDED IN 91s (1284 probes/s)
+		ADDING 116874 COORDINATES
+		114884 PROBES ADDED IN 94s (1222 probes/s)
+		ADDING 114884 COORDINATES
+		116874 COORDINATES ADDED IN 10s (11687 coords/s)
+		114884 COORDINATES ADDED IN 6s (19147 coords/s)
+		125895 PROBES ADDED IN 108s (1165 probes/s)
+		ADDING 125895 COORDINATES
+		125895 COORDINATES ADDED IN 10s (12589 coords/s)
+		118087 PROBES ADDED IN 94s (1256 probes/s)
+		ADDING 118087 COORDINATES
+		114756 PROBES ADDED IN 101s (1136 probes/s)
+		ADDING 114756 COORDINATES
+		118087 COORDINATES ADDED IN 9s (13120 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295403|ref|NC_006030.1| Candida glabrata strain CBS138 chromosome G complete sequence ANALIZED IN 313s
+	234961 PROBES GENERATED (750probes/s)
+	992211 BP ANALYSED (3170bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295406|ref|NC_006033.1| Candida glabrata strain CBS138 chromosome J complete sequence[10] (1192501bp)
+		114756 COORDINATES ADDED IN 7s (16393 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295404|ref|NC_006031.1| Candida glabrata strain CBS138 chromosome H complete sequence ANALIZED IN 312s
+	229640 PROBES GENERATED (736probes/s)
+	1050361 BP ANALYSED (3366bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295407|ref|NC_006034.1| Candida glabrata strain CBS138 chromosome K complete sequence[11] (1302002bp)
+		125752 PROBES ADDED IN 98s (1283 probes/s)
+		ADDING 125752 COORDINATES
+		125752 COORDINATES ADDED IN 12s (10479 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295405|ref|NC_006032.1| Candida glabrata CBS 138 chromosome I, complete sequence ANALIZED IN 350s
+	251647 PROBES GENERATED (718probes/s)
+	1089401 BP ANALYSED (3112bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295408|ref|NC_006035.1| Candida glabrata strain CBS138 chromosome L complete sequence[12] (1440588bp)
+		141462 PROBES ADDED IN 112s (1263 probes/s)
+		ADDING 141462 COORDINATES
+		141462 COORDINATES ADDED IN 12s (11788 coords/s)
+		145770 PROBES ADDED IN 122s (1194 probes/s)
+		ADDING 145770 COORDINATES
+		145770 COORDINATES ADDED IN 11s (13251 coords/s)
+		163259 PROBES ADDED IN 120s (1360 probes/s)
+		ADDING 163259 COORDINATES
+		163259 COORDINATES ADDED IN 13s (12558 coords/s)
+		141633 PROBES ADDED IN 120s (1180 probes/s)
+		ADDING 141633 COORDINATES
+		141633 COORDINATES ADDED IN 14s (10116 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295406|ref|NC_006033.1| Candida glabrata strain CBS138 chromosome J complete sequence ANALIZED IN 384s
+	283095 PROBES GENERATED (737probes/s)
+	1192501 BP ANALYSED (3105bp/s)
+MAKING FRAGMENTS FOR input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295409|ref|NC_006036.1| Candida glabrata CBS 138 chromosome M, complete sequence[13] (1400893bp)
+175755 LINES LOADED
+		145608 PROBES ADDED IN 123s (1183 probes/s)
+		ADDING 145608 COORDINATES
+		145608 COORDINATES ADDED IN 11s (13236 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295407|ref|NC_006034.1| Candida glabrata strain CBS138 chromosome K complete sequence ANALIZED IN 406s
+	291378 PROBES GENERATED (717probes/s)
+	1302002 BP ANALYSED (3206bp/s)
+		162830 PROBES ADDED IN 102s (1596 probes/s)
+		ADDING 162830 COORDINATES
+		162830 COORDINATES ADDED IN 9s (18092 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295408|ref|NC_006035.1| Candida glabrata strain CBS138 chromosome L complete sequence ANALIZED IN 419s
+	326089 PROBES GENERATED (778probes/s)
+	1440588 BP ANALYSED (3438bp/s)
+		160945 PROBES ADDED IN 99s (1625 probes/s)
+		ADDING 160945 COORDINATES
+		160945 COORDINATES ADDED IN 5s (32188 coords/s)
+		160915 PROBES ADDED IN 63s (2554 probes/s)
+		ADDING 160915 COORDINATES
+		160915 COORDINATES ADDED IN 6s (26818 coords/s)
+	SEQUENCE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta gi|50295409|ref|NC_006036.1| Candida glabrata CBS 138 chromosome M, complete sequence ANALIZED IN 323s
+	321860 PROBES GENERATED (996probes/s)
+	1400893 BP ANALYSED (4337bp/s)
+14 SEQUENCES ON FILE input/Candida_glabrata_CBS138_CHROMOSSOMES.fasta LIG GC% ] 45,60 [, M13 GC% ] 35,60 [, LIG TM  ] 75,82 [, M13 TM  ] 75,90 [, LENGTH LIG ( 13 ), LENGTH M13 ( 10 )
+done
+12300420 bp on 1397 s [ 8805 bp/s ]
+
+real	23m16.523s
+user	23m42.120s
+sys	0m55.702s
+********************
+FINISH RUNNING FILE 6 OUT OF 41	Candida_glabrata_CBS138_CHROMOSSOMES.fasta
+********************
+
+
+
+####################
+RUNNING FILE 41 OUT OF 41	Western_roedeer_papillomavirus_1_complete_genome.fasta
+####################
+RUNNING OVER FILE input/Western_roedeer_papillomavirus_1_complete_genome.fasta
+MAKING FRAGMENTS FOR input/Western_roedeer_papillomavirus_1_complete_genome.fasta gi|194268064|ref|NC_011051.1| Western roedeer papillomavirus 1, complete genome[0] (8032bp)
+117 LINES LOADED
+		2227 PROBES ADDED IN 1s (2226 probes/s)
+		ADDING 2227 COORDINATES
+		2227 COORDINATES ADDED IN 0s (22270000 coords/s)
+		2227 PROBES ADDED IN 2s (1113 probes/s)
+		ADDING 2227 COORDINATES
+		2227 COORDINATES ADDED IN 0s (22270000 coords/s)
+	SEQUENCE input/Western_roedeer_papillomavirus_1_complete_genome.fasta gi|194268064|ref|NC_011051.1| Western roedeer papillomavirus 1, complete genome ANALIZED IN 3s
+	4454 PROBES GENERATED (1484probes/s)
+	8032 BP ANALYSED (2677bp/s)
+1 SEQUENCES ON FILE input/Western_roedeer_papillomavirus_1_complete_genome.fasta LIG GC% ] 45,60 [, M13 GC% ] 35,60 [, LIG TM  ] 75,82 [, M13 TM  ] 75,90 [, LENGTH LIG ( 13 ), LENGTH M13 ( 10 )
+done
+8032 bp on 3 s [ 2677 bp/s ]
+
+real	0m3.082s
+user	0m1.273s
+sys	0m0.127s
+********************
+FINISH RUNNING FILE 41 OUT OF 41	Western_roedeer_papillomavirus_1_complete_genome.fasta
+********************
+
+
+
+....................
+OPTIMIZING
+....................
+Table	Op	Msg_type	Msg_text
+probe.organism	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe.probe	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe.coordinates	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe2.organism	optimize	status	OK
+Table	Op	Msg_type	Msg_text
+probe2.probe	optimize	error	The table '#sql-11bf_13d' is full
+probe2.probe	optimize	status	Operation failed
+Table	Op	Msg_type	Msg_text
+probe2.coordinates	optimize	status	OK
+
+real	14m24.732s
+user	0m0.007s
+sys	0m0.008s
+
+real	76m27.184s
+user	85m7.631s
+sys	2m19.585s
+
+

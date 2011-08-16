@@ -1,0 +1,35 @@
+<root>
+    <rolf>
+	<baseFolder>/home/saulo/Desktop/rolf 	</baseFolder>
+	<addUnkown> 1 			</addUnkown>
+	<autoClean> 1			</autoClean>
+	<exclude>
+		<ext>
+			<array>.had	    		</array>
+			<array>.znm.gz			</array>
+			<array>.wc  			</array>
+			<array>rolf2/wc/taxon/	</array>
+			<array>~	    		</array>
+		</ext>
+		<folder>
+			<array>input/input/			</array>
+			<array>Linkprobes/dumps/	</array>
+			<array>Linkprobes/java/		</array>
+			<array>rolf2/output/		</array>
+			<array>rolf2/wc/out/		</array>
+			<array>rolf2_output/		</array>
+		</folder>
+	</exclude>
+	<byFolder>
+		<array>
+			<folder>rolf2/wc/out/</folder>
+			<include>
+				<ext>
+					<array>.sh</array>
+					<array>.pl</array>
+				</ext>
+			</include>
+		</array>
+	</byFolder>
+    </rolf>
+</root>

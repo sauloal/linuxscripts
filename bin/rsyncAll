@@ -1,0 +1,75 @@
+#!/usr/bin/perl -w
+use strict;
+
+#rsync plans
+use FindBin qw($Bin);
+use lib "$Bin/lib";
+use readpass;
+
+my $secr        = new readpass();
+my $io_user     = $secr->getValue("rsyncall_iomega_user");
+my $io_pass     = $secr->getValue("rsyncall_iomega_pass");
+
+die "NO USER DEFINED " if ! defined $io_user;
+die "NO PASS DEFINED " if ! defined $io_pass;
+
+my $BIN         = '/home/saulo/bin/rsyncIomega';
+my $SAULOHOME   = 1;
+my $ETC         = 1;
+my $SILVERMUSIC = 1;
+my $SILVERBOOKS = 1;
+my $STUFFFOTOS  = 1;
+
+
+if (( -d "/home/saulo" ) && ( "$SAULOHOME" == 1 )) {
+	print "home\n";
+	my $CMD = "$BIN -d /Backups/saulo/laptop/lin/home -s /home/saulo  -a 192.168.1.102 -u $io_user -p $io_pass  ".
+                  "--exclude=rpmbuild        --exclude=.xsession-errors                                             ".
+                  "--exclude=.abrt           --exclude=.gvfs            --exclude=.xsession-errors                  ".
+                  "--exclude=.cache          --exclude=.m2              --exclude=.thumbnails                       ".
+                  "--exclude=*.git/objects*  --exclude=Music/*          --exclude=*.mozilla/firefox/*.default/Cache*";
+	&printandplay($CMD);
+}
+
+if (( -d "/etc" ) && ( "$ETC" == 1 )) {
+        print "etc\n";
+        my $CMD = "$BIN -d /Backups/saulo/laptop/lin/etc -s /etc                        -a 192.168.1.102 -u $io_user -p $io_pass";
+	&printandplay($CMD);
+}
+
+
+if (( -d "/media/SAAHD1T1TWSILVER/" )) {
+	if (( "$SILVERMUSIC" == 1 )) {
+		print "  silver music\n";
+		my $CMD = "$BIN -d /Music/saulo/                  -s \"/media/SAAHD1T1TWSILVER/musics/\"    -a 192.168.1.102 -u $io_user -p $io_pass ";
+		&printandplay($CMD);
+	}
+
+	if (( "$SILVERBOOKS" == 1 )) {
+		print "  silver books\n";
+		my $CMD = "$BIN -d /Documents/                    -s \"/media/SAAHD1T1TWSILVER/free/BOOKS\" -a 192.168.1.102 -u $io_user -p $io_pass ";
+		&printandplay($CMD);
+	}
+}
+
+if (( -d "/media/STUFF(60g)/" ) && ( "STUFFFOTOS" == 1 )) {
+	print "stuff fotos\n";
+	my $CMD = "$BIN -d /Pictures/Saulo/               -s \"/media/STUFF(60g)/FOTOS/\"         -a 192.168.1.102 -u $io_user -p $io_pass ";
+	&printandplay($CMD);
+}
+
+
+
+sub printandplay {
+	my $cmd = shift;
+	print "  CMD: '$cmd'\n";
+
+	open STATUS, "$cmd 2>&1 |" or die "can't fork: $!"; 
+	while (<STATUS>) { 
+		print "\t", $_; 
+	} 
+	close STATUS or die "bad netstat: $! $?";
+}
+
+exit 0
+

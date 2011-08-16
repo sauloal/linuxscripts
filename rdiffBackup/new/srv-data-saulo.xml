@@ -1,0 +1,14 @@
+<root>
+    <srv-data-saulo>
+		<preExec>   mount -t cifs //srv-data1/Data/Home/s.aflitos -o username=s.aflitos,password=pwd <srv-data-saulo.baseFolder/></preExec>
+		<posExec>   umount <srv-data-saulo.baseFolder/>			</posExec>
+	        <baseFolder>/mnt/srv-data-saulo/		 		</baseFolder>
+		<addUnkown> 1				 			</addUnkown>
+		<autoClean> 1							</autoClean>
+		<exclude>
+			<folder>
+				<array>jungledisk-usb</array>
+			</folder>
+		</exclude>
+    </srv-data-saulo>
+</root>

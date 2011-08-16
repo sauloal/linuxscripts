@@ -1,0 +1,28 @@
+#!/bin/bash
+EXECUTABLE=/home/saulo/bin/s3sync
+EXCLUDEALL="--exclude=*~"
+#SAULOEXCLUDE="--exclude=.gvfs       --exclude .xsession-errors --exclude=**/*tmp*/       \
+#              --exclude=**/*cache*/ --exclude=**/*Cache*/      --exclude=**~             \
+#              --exclude=/media/*/** --exclude=/mnt/*/**        --exclude=**/lost+found*/ \
+#              --exclude=/var/**     --exclude=/proc/**         --exclude=/dev/**         \
+#              --exclude=**/*Trash*/ --exclude=**/*trash*/      --exclude=/sys/**         \
+#              --exclude .gvfs       --exclude rpmbuild                                   \
+#              --exclude .mozilla/firefox/mi5dxplw.default/Cache "
+
+
+SAULOEXCLUDE=" --exclude='.gvfs*'        --exclude=.xsession-errors     --exclude='rpmbuild*'  \
+               --exclude=.cache*         --exclude=.m2*                 --exclude=.thumbnails* \
+               --exclude=*.git/objects*  --exclude=.cache*                                     \
+               --exclude=Documents/git/* --exclude=Documents/renorbio/* --exclude=Dropbox/*    \
+               --exclude=Music/*         --exclude=.abrt*                                      \
+               --exclude=*.mozilla/firefox/*.default/Cache*        "
+
+GITEXCLUDE="--exclude=*.git/objects*"
+
+$EXECUTABLE  $EXCLUDEALL $SAULOEXCLUDE /home/saulo/                       s3://saulo.note.lin.home/ 
+$EXECUTABLE  $EXCLUDEALL               /etc/                              s3://saulo.note.lin.etc/
+$EXECUTABLE  $EXCLUDEALL $GITEXCLUDE   /home/saulo/Documents/git/online/  s3://saulo.git/
+$EXECUTABLE  $EXCLUDEALL               /home/saulo/Documents/renorbio/    s3://saulo.renorbio/
+$EXECUTABLE  $EXCLUDEALL               /home/saulo/Documents/aws/current/ s3://saulo.aws/
+
+

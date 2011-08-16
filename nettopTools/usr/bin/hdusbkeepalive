@@ -1,0 +1,6 @@
+cat /etc/usbfolders | while read line 
+do
+ #echo ${line}
+ #echo "${line}/0"
+ touch "${line}/0"
+done

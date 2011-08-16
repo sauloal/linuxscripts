@@ -1,0 +1,482 @@
+#!/usr/bin/perl -w 
+use strict;
+use Cwd 'abs_path';
+use File::Spec;
+use File::Glob ':glob';
+use Getopt::Long;
+
+my $OlocalDir;
+my $OremoteDir;
+my $Oprofile;
+my $Omethod;
+my $Ooptions;
+
+GetOptions(
+	'localdir|ld=s'   => \$OlocalDir,
+	'remotedir|rd=s'  => \$OremoteDir,
+	'profile|p=s'     => \$Oprofile,
+	'method|m=s'      => \$Omethod,
+	'options|opt|o=s' => \$Ooptions,
+);
+
+
+my $profile     = defined $Oprofile ? $Oprofile : shift(@ARGV);
+my $met         = defined $Omethod  ? $Omethod  : "connect";
+
+
+if (( ! defined $Omethod ) && ( @ARGV ))
+{
+	if    ( $ARGV[0] eq "send" )
+	{
+		shift(@ARGV);
+		$met = "send";
+	}
+	elsif ( $ARGV[0] eq "receive" )
+	{
+		shift(@ARGV);
+		$met = "receive";
+	}
+	elsif ( $ARGV[0] eq "connect" )
+        {
+                shift(@ARGV);
+                $met = "connect";
+	}
+	elsif ( $ARGV[0] eq "mount" )
+        {
+                shift(@ARGV);
+                $met = "mount";
+        }
+        elsif ( $ARGV[0] eq "umount" )
+        {
+                shift(@ARGV);
+                $met = "umount";
+        } else {
+		$met = "connect";
+	}
+
+
+	if (( $met ne "connect") && ( ! @ARGV ))
+	{
+		if ( $met eq 'send' || $met eq 'receive')
+		{
+			&list();
+			print "\n\nISSUED '$met' COMMAND WITHOUT FILE\n";
+			exit 1;
+		}
+		elsif ( $met eq 'mount' || $met eq 'umount')
+		{
+			&list();
+			print "\n\nISSUED '$met' COMMAND WITHOUT A FOLDER\n";
+			exit 1;
+		}
+	}
+}
+
+my @args        = @ARGV;
+my $defaultOpts = "-C -Y -2 -4 -o TCPKeepAlive=yes";
+my %profiles    = &getProfiles();
+
+if (( ! defined $profile ) || ( $profile eq "list" ))
+{
+	&list();
+	exit 1;
+}
+
+my $command     = &genCmd($profile, $met, \@args);
+my ($con, $dis) = &genCmdGeneral($command, $met);
+#print "CONNECT $con\nDISCONNECT $dis\n";
+
+if    ( $met eq "connect" )     {	print $con . "; " . $dis ; }
+elsif ( $met eq "send"    ||
+	$met eq "receive" )     {	print $con               ; }
+elsif ( $met eq "mount"   )	{	print $con               ; }
+elsif ( $met eq "umount"  )	{	print $dis               ; }
+else                    	{	die "UNKNOWN METHOD $met";
+				     	&list();
+					exit 1;
+				}
+
+#print $command;
+exit 0;
+
+
+
+
+sub genCmd
+{
+	my $prof     = shift;
+	my $method   = shift;
+	my $args     = shift;
+
+	#my $command = &genCmd($profile, $met, \@args);
+	#tar -cj connect connectNfo gtalk lib/* ../.connectprofiles | base64 | ssh saulo@192.168.1.100 -p 443 'base64 -d | tar -xj'
+	#sshfs -p 2222 aflit001@localhost:/home/aflit001 dev1
+
+	if ( ! exists $profiles{$prof} )
+	{
+		print "NO SUCH PROFILE '$prof'\n";
+		&list();
+		exit 1;
+	}
+	
+	my $nfo   = $profiles{$prof};
+	my $add   = $nfo->{ADD};
+	my $ident = &getIdent($nfo);
+	
+	my $usr   = exists $nfo->{USR}   ? " -l ". $nfo->{USR}  : "";
+	my $port  = exists ${$nfo}{PORT} ? " -p ". $nfo->{PORT} : "";
+	my $opts  = exists ${$nfo}{OPTS} ? " "   . $nfo->{OPTS} : "";
+	
+	my $uio;
+	$uio .= " $usr"   if $usr;
+	$uio .= " $ident" if $ident;
+	$uio .= " $opts"  if $opts;
+
+	if ( exists ${$nfo}{HOP} )
+	{
+		my ($hopCmd, $hopCmdU, $hopPort) = &genHop($nfo->{HOP}, $prof);
+		my $middle                       = "ssh localhost -p $hopPort $uio";
+		my $comm                         = &genCmdEpitope($middle, $prof, $method, $args);
+		my @cmd;
+		push(@cmd, $hopCmd);
+		push(@cmd, $comm);
+		return \@cmd;
+	} else {
+		my $begin                        = "ssh $add $port $uio";
+		my $comm                         = &genCmdEpitope($begin, $prof, $method, $args);
+		my @cmd;
+		push(@cmd, $comm);
+		return \@cmd;
+	}
+}
+
+sub genCmdGeneral
+{
+	my $cmd    = shift;
+	my $method = shift;
+	my @cmdK;
+
+	foreach my $c (reverse @$cmd)
+	{
+		push(@cmdK, &getKill($c));
+	}
+	
+	my $connect;
+	my $disconnect;
+	for (my $c = 0; $c < @$cmd; $c++)
+	{
+		my $cc = $cmd->[$c];
+		my $ck = $cmdK[$c];
+		#print "CC $cc\nCK $ck\n\n";
+		$connect    .= (defined $connect    ? "; " : "") . $cc;
+		$disconnect .= (defined $disconnect ? "; " : "") . $ck;
+	}
+	#print "CONNECT $connect DISCONNECT $disconnect\n";
+	return ( $connect, $disconnect);
+}
+
+sub getKill
+{
+	my $cmd = shift;
+	#print "GET KILL $cmd\n";
+	my $kil = 'PROC=`ps aux | grep \'' . $cmd . '\' | grep -v grep | gawk ' . "'" . '{print $2}' . "'" . '`; if [[ ! -z "$PROC" ]]; then echo "KILLING $PROC"; kill $PROC; fi';
+	return $kil;
+}
+
+sub genCmdEpitope
+{
+	my $origCmd  = shift;
+        my $prof     = shift;
+        my $method   = shift;
+        my $args     = shift;
+	my $arg      = "";
+	my $cmd      = "";
+
+	if ( defined $args )
+        {
+		$arg = join(" ", @$args);
+        }
+
+	if ( $method eq "connect" )
+	{
+		$cmd .= $origCmd;
+		$cmd .= " $arg" if $arg;
+	}
+	elsif ( $method eq "send"    )
+	{
+		#$cmd = "tar -cz $arg | base64 | $cmd 'base64 -d | tar -xz";
+		$cmd = "tar -cz $arg | $origCmd 'cat - | tar -xz";
+
+		if ( defined $OremoteDir )
+		{
+			$cmd .= " -C $OremoteDir";
+		}
+		$cmd .= "'";
+	}
+      	elsif ( $method eq "receive" )
+	{
+		$cmd = "$origCmd 'tar -cz $arg' | tar -xz";
+		if ( defined $OlocalDir )
+		{
+			$cmd .= " -C $OlocalDir";
+		}
+	}
+        elsif ( $method eq "mount" )
+	{
+		#sshfs -p 2222 aflit001@localhost:/home/aflit001 dev1
+		$cmd = "$origCmd 'tar -cj $arg' | tar -xj";
+		if ( defined $OlocalDir )
+		{
+			$cmd .= " -C $OlocalDir";
+		}
+	}
+       	elsif ( $method eq "umount" )
+	{
+		#sshfs -p 2222 aflit001@localhost:/home/aflit001 dev1
+		$cmd = "$origCmd 'tar -cj $arg' | tar -xj";
+		if ( defined $OlocalDir )
+		{
+			$cmd .= " -C $OlocalDir";
+		}
+	} else {
+		die "UNKNOWN METHOD $method";
+	}
+
+	return $cmd;
+}
+
+sub genHop
+{
+	my $hopProfile = shift;
+	my $dstProfile = shift;
+	
+	my $hopNfo     = $profiles{$hopProfile};
+	my $hopAdd     = $hopNfo->{ADD};
+	my $hopPort    = $hopNfo->{PORT};
+	my $hopUsr     = $hopNfo->{USR};
+	my $hopOpt     = $hopNfo->{OPTS};
+	
+	my $dstNfo     = $profiles{$dstProfile};
+        my $dstAdd     = $dstNfo->{ADD};
+        my $dstPort    = exists ${$dstNfo}{PORT} ? $dstNfo->{PORT} : "22";
+	my $dstIdent   = &getIdent($dstNfo);        
+
+	my $hopPortF   = &getHopPort($dstAdd);
+
+	my $hopCmd     = "ssh -p $hopPort $hopAdd -l $hopUsr $hopOpt $dstIdent -L localhost:$hopPortF:$dstAdd:$dstPort -N -n -f";
+
+	my @empty;
+	my $cmd        = &genCmdEpitope($hopCmd, $hopProfile, "connect", \@empty);
+	my $cmdU       = &getKill($hopCmd);
+	
+	if ( exists ${$hopNfo}{HOP} )
+        {
+		my ($ndCmd, $ndCmdU, $ndPort) = &genHop($hopNfo->{HOP}, $hopProfile);
+		#print "HOP $hopProfile $hopCmd	\n";	
+		$cmd      = $ndCmd  . ( $ndCmd  ne '' ? '; ' : '') . $cmd;
+		$cmdU     = $ndCmdU . ( $ndCmdU ne '' ? '; ' : '') . $cmdU;
+	}
+
+	return ($cmd, $cmdU, $hopPortF);
+}
+
+sub getIdent
+{
+	my $nfo = shift;
+
+	my $ident;
+        if ( exists ${$nfo}{IDENT} && $nfo->{IDENT} && $nfo->{IDENT} ne "")
+        {
+                my $id  = File::Spec->canonpath(bsd_glob($nfo->{IDENT}, GLOB_TILDE));
+                if ( $id && -f $id )
+                {
+                        $ident = "-i $id";
+                } else {
+                        print "IDENTITY FILE $nfo->{IDENT} DOES NOT EXIST";
+                        exit 1;
+                }
+        } else {
+                $ident = "";
+        }
+
+	return $ident;
+}
+
+sub list
+{
+	print "LISTING\n";
+	foreach my $key ( sort keys %profiles )
+	{
+		print "\t$key\n";
+	}
+
+	print "USAGE:
+	{} => OPTIONAL
+	[] => VAR
+	CONNECT:
+		$0 {<profile|p>} [profile name]
+		$0 {<profile|p>} [profile name] {<options|opt|o>} [extra options]
+		
+	EXCHANGE FILES:
+		$0 {<profile|p>} [profile name] {<method|m>} [receive] {<localdir|ld>  [desired receiving dir]} {<options|opt|o> [extra options]} files
+		$0 {<profile|p>} [profile name] {<method|m>} [send]    {<remotedir|rd> [desired receiving dir]} {<options|opt|o> [extra options]} files
+		$0 {<profile|p>} [profile name] {<method|m>} [mount]   {<remotedir|rd> <localdir|ld>} {<options|opt|o> [extra options]}
+		$0 {<profile|p>} [profile name] {<method|m>} [umount]  {<localdir|ld>} {<options|opt|o> [extra options]}
+		(Extra options have to be used the long form in case of send and receive)
+";
+	print "\n";
+}
+
+
+sub getHopPort
+{
+	my $add     = shift;
+	my $hopFile = "/tmp/connectStartHop";
+	my $dfP     = 2222;
+
+	if ( ! -f "$hopFile" )
+	{
+		open H, ">$hopFile" or die "ERROR CREATING $hopFile: $!";
+		print H "$add\t$dfP\n";
+		close H;
+		return $dfP;
+	} else {
+		open H,	"<$hopFile" or die "ERROR READING $hopFile: $!";
+		my @data = <H>;
+		
+		my $lastPort = $dfP;
+		foreach my $data (@data)
+		{
+			chomp $data;
+			my ($fAdd, $port)  = split("\t", $data);
+			if ( $fAdd eq $add )
+			{
+				return $port;
+			} else {
+				$lastPort = (( defined $port ) && ( $port > $lastPort )) ? $port : $lastPort;
+			}
+		}
+		close H;
+
+		open  H, ">>$hopFile" or die "ERROR READING $hopFile: $!";
+                print H	"$add\t", ($lastPort+1), "\n";
+                close H;
+                return ($lastPort+1);
+	}
+}
+
+
+
+sub getProfiles
+{
+	my $connectProfiles = $ENV{HOME} . "/.connectprofiles";
+
+	if ( ! -f $connectProfiles )
+	{
+		print "NO PROFILE FILE FOUND $connectProfiles\n";
+		print "CREATING DUMMY\n";
+		open PROF, ">$connectProfiles" or die "ERROR OPENING PROFILE: $!";
+		my $dummy = <<END
+laptop => {
+        USR     => "$ENV{USER}",
+	ADD     => "localhost",
+        PORT    => "22",
+        IDENT   => "~/.ssh/id_rsa",
+        OPTS    => "\$defaultOpts",
+	RFOLDER => "/home/remoteFolder/",
+	LFOLDER => "/home/localFolder/",
+}
+END
+;
+		print PROF $dummy;
+		close PROF;
+		exit 1;
+	} else {
+		open PROF, "<$connectProfiles" or die "ERROR OPENING PROFILE: $!";
+		my $prof = '{' . "\n" . join("", <PROF>) . "\n" . '}';
+		close PROF;
+		#print "PROF $prof\n";
+		my $res = eval $prof;
+		die "$prof\n$@\n" if $@;
+		#print $res;
+		return %$res;
+	}
+}
+
+sub getProfilesOld
+{
+	my %prof = (
+	        laptop => {
+        	        ADD   => "192.168.1.101",
+                	PORT  => "22",
+	                IDENT => "~/.ssh/id_rsa_passwordless",
+        	        OPTS  => $defaultOpts
+	        },
+		laptopOut => {
+	                ADD   => "sauloal.mine.nu",
+        	        PORT  => "222",
+                	IDENT => "~/.ssh/id_rsa_passwordless",
+	                OPTS  => $defaultOpts
+        	},
+		nettop => {
+        	        ADD   => "192.168.1.100",
+                	PORT  => "443",
+	                IDENT => "~/.ssh/id_rsa_passwordless",
+        	        OPTS  => $defaultOpts
+	        },
+		nettopOut => {
+	                ADD   => "sauloal.mine.nu",
+        	        PORT  => "443",
+                	IDENT => "~/.ssh/id_rsa_passwordless",
+	                OPTS  => $defaultOpts
+        	},
+		dev1 => {
+        	        ADD   => "dev1.wurnet.nl",
+                	PORT  => "22",
+	                IDENT => "~/.ssh/id_rsa_passwordless",
+        	        OPTS  => $defaultOpts
+	        },
+		dev1out => {
+                	ADD     => "dev1.wurnet.nl",
+	                PORT    => "22",
+        	        IDENT   => "~/.ssh/id_rsa_passwordless",,
+                	HOP     => "ftpab",
+	                OPTS    => $defaultOpts,
+			RFOLDER => "/home/aflit001",
+			LFOLDER => "/home/saulo/dev1",
+	        },
+		ftpab => {
+                	ADD   => "ftp.ab.wur.nl",
+	                PORT  => "22",
+        	        IDENT => "~/.ssh/id_rsa_passwordless",
+                	OPTS  => $defaultOpts
+	        }
+	);
+
+	#use Data::Dump qw(dump);
+	#dump \%prof;
+	#die;
+
+	return %prof;
+}
+
+#PORT1=22
+#HOST1=ftp.ab.wur.nl
+#KEY1=~/.ssh/id_rsa_passwordless
+
+#PORT2=22
+#HOST2=dev1.ab.wurnet.nl
+#KEY2=~/.ssh/id_rsa_passwordless
+
+#PORTI=2222
+
+#USER=aflit001
+#OPT1="-C -Y -2 -4 -o TCPKeepAlive=yes"
+#OPT2="-C -Y -2 -4 -o TCPKeepAlive=yes -L localhost:5908:localhost:5908"
+
+#BEFOR="ssh $OPT1 -i $KEY1 -p $PORT1 -L localhost:$PORTI:$HOST2:$PORT2 -N -n -f $USER@$HOST1"
+#AFTER="ssh $OPT2 -i $KEY2 -p $PORTI $USER@localhost"
+
+#echo $BEFOR
+#echo $AFTER
+

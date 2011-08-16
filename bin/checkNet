@@ -1,0 +1,102 @@
+#!/bin/bash
+
+#local
+	IPS[0]=192.168.1.1
+#google
+	IPS[1]=8.8.4.4
+	IPS[2]=8.8.8.8
+#opendns
+	IPS[3]=208.67.222.222
+	IPS[4]=208.67.220.220
+#dnsadvantage
+	IPS[5]=156.154.70.1
+	IPS[6]=156.154.71.1
+#Norton
+	IPS[7]=198.153.192.1
+	IPS[8]=198.153.194.1
+#GTEI DNS (now Verizon)
+	IPS[9]=4.2.2.1
+	IPS[10]=4.2.2.2
+	IPS[11]=4.2.2.3
+	IPS[12]=4.2.2.4
+	IPS[13]=4.2.2.5
+	IPS[14]=4.2.2.6
+#ScrubIt
+#	IPS[15]=67.138.54.100
+#	IPS[16]=207.225.209.66
+#Thailand
+#	IPS[17]=203.150.17.17
+#	IPS[18]=203.155.33.1
+#http://www.clearclouddns.com/
+#	IPS[19]=74.118.212.1
+#	IPS[20]=74.118.212.2
+
+
+RANGE=${#IPS[*]}
+
+number1=$RANDOM
+let "number1 %= $RANGE"
+#echo "Random number less than $RANGE  ---  $number1"
+IP=${IPS[$number1]}
+#echo "Random IP $IP"
+
+number2=$RANDOM
+let "number2 %= $RANGE"
+#echo "Random number less than $RANGE  ---  $number2"
+IP2=${IPS[$number]}
+
+
+#exit 0
+
+#IP=192.168.1.1
+INT=wlan0
+IFCONFIG="/sbin/ifconfig wlan0"
+DATE=`date`
+LOG=/home/saulo/bin/checkNet.log
+INTRANET=/home/saulo/bin/checkNet.cfg
+
+if [ -f "$INTRANET" ]; then
+	echo $DATE " :: INTRANET :: SKIP" >> ${LOG};
+	exit 0
+fi
+
+IFRES=`$IFCONFIG | grep "inet addr:"`
+
+if [ "$IFRES" ]; then
+        echo $DATE " :: CONNECTED :: $IFRES" >> ${LOG};
+#        echo $DATE " :: CONNECTED :: SKIPPING :: $IFRES" >> ${LOG};
+#        exit 0
+fi
+
+
+PINGCODE=`ping -nq -c 1 -w 1 -W 1 $IP | grep "received"`
+echo $DATE " :: PING :: IP #${number1}=${IP} :: ${PINGCODE}" >> ${LOG};
+
+GREPCODE=`echo $PINGCODE | gawk '{ if ( /1 received/ ) { print "yes" } else { print "no" } }'`
+echo $DATE " :: PING GREP :: ${GREPCODE}" >> ${LOG};
+
+
+if [ ${GREPCODE} == "yes" ]; then
+	echo $DATE " :: PING GREP YES :: SKIP" >> ${LOG};
+	exit 0
+else
+	echo $DATE " :: PING GREP NO :: CHECKING AGAIN" >> ${LOG};
+
+	sleep 30
+
+	PINGCODE=`ping -nq -c 1 -w 1 -W 1 ${IP2}`
+	GREPCODE=`echo $PINGCODE | gawk '{ if ( /1 responded/ ){ print "yes" } else { print "no" } }'`
+
+	if [ ${GREPCODE} == "no" ]; then
+		echo $DATE " :: PING GREP NO RE-CHECK NO :: IP #${number2}=${IP2} :: ${PINCODE}" >> ${LOG}
+		echo $DATE " :: PING GREP NO RE-CHECK NO :: RESETING"   >> ${LOG}
+                /sbin/service network restart        &>>${LOG} 
+		sleep 10
+		/sbin/service NetworkManager restart &>>${LOG} 
+		sleep 10
+		echo "" >> ${LOG}
+		twitter NETWORK RESTARTED 2>>${LOG}
+	fi
+fi
+
+

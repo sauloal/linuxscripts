@@ -1,0 +1,4 @@
+nano /etc/auto.misc
+removable   -fstype=auto,rw,users   :/dev/hdd
+
+http://opensuse.swerdna.org/susentfs.html

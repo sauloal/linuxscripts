@@ -1,0 +1,25 @@
+SELECT * FROM  (SELECT * FROM  (SELECT * FROM  (SELECT * FROM  (SELECT ligant, sequence, sequenceLig, sequenceM13 FROM `probe`.`complete` GROUP BY ligant HAVING count(ligant) = 1) AS tligant GROUP BY sequence HAVING count(sequence) = 1) AS tsequence GROUP BY sequenceLig HAVING count(sequenceLig) = 1) AS tsequenceLig GROUP BY sequenceM13 HAVING count(sequenceM13) = 1) AS tsequenceM13
+01.16.0284
+
+[saulo@SRV-FUNGI rolf]$ time mysql -uprobe -Dprobe < /var/rolf/sql/probe_09_index.sql
+real	26m44.722s
+user	0m0.002s
+sys		0m0.003s
+SELECT * FROM  (SELECT * FROM  (SELECT * FROM  (SELECT * FROM  (SELECT ligant, sequence, sequenceLig, sequenceM13 FROM `probe`.`complete` GROUP BY ligant HAVING count(ligant) = 1) AS tligant GROUP BY sequence HAVING count(sequence) = 1) AS tsequence GROUP BY sequenceLig HAVING count(sequenceLig) = 1) AS tsequenceLig GROUP BY sequenceM13 HAVING count(sequenceM13) = 1) AS tsequenceM13
+33.51.3948
+
+
+SELECT * FROM  (SELECT sequenceM13 FROM  (SELECT sequenceLig, sequenceM13 FROM  (SELECT sequence, sequenceLig, sequenceM13 FROM  (SELECT ligant, sequence, sequenceLig, sequenceM13 FROM `probe`.`complete` GROUP BY ligant HAVING count(ligant) = 1) AS tligant GROUP BY sequence HAVING count(sequence) = 1) AS tsequence GROUP BY sequenceLig HAVING count(sequenceLig) = 1) AS tsequenceLig GROUP BY sequenceM13 HAVING count(sequenceM13) = 1) AS tsequenceM13
+01.05.4952
+
+SELECT idCoordinates FROM  (SELECT idCoordinates, sequenceM13 FROM  (SELECT idCoordinates, sequenceLig, sequenceM13 FROM  (SELECT idCoordinates, sequence, sequenceLig, sequenceM13 FROM  (SELECT idCoordinates, ligant, sequence, sequenceLig, sequenceM13 FROM `probe`.`complete` GROUP BY ligant HAVING count(ligant) = 1) AS tligant GROUP BY sequence HAVING count(sequence) = 1) AS tsequence GROUP BY sequenceLig HAVING count(sequenceLig) = 1) AS tsequenceLig GROUP BY sequenceM13 HAVING count(sequenceM13) = 1) AS tsequenceM13
+01.03.0127
+
+SELECT ligant, sequence, sequenceLig, sequenceM13 FROM (SELECT idCoordinates FROM  (SELECT idCoordinates, sequenceM13 FROM  (SELECT idCoordinates, sequenceLig, sequenceM13 FROM  (SELECT idCoordinates, sequence, sequenceLig, sequenceM13 FROM  (SELECT idCoordinates, ligant, sequence, sequenceLig, sequenceM13 FROM `probe`.`complete` GROUP BY ligant HAVING count(ligant) = 1) AS tligant GROUP BY sequence HAVING count(sequence) = 1) AS tsequence GROUP BY sequenceLig HAVING count(sequenceLig) = 1) AS tsequenceLig GROUP BY sequenceM13 HAVING count(sequenceM13) = 1) AS tsequenceM13) AS tFinal, `probe`.`complete` WHERE tFinal.idCoordinates = complete.idCoordinates
+01.37.2030
+
+CREATE TABLE probe.tLigant SELECT idCoordinates, ligant FROM `probe`.`complete` GROUP BY ligant HAVING count(ligant) = 1
+01.05.4567
+31.21.0073	index ligant
+02.14.5701	index idcoordinates,ligant
+

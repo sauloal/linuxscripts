@@ -1,0 +1,298 @@
+#!/bin/bash
+SELF="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+me=`basename $0`
+#echo "SELF $SELF"
+#echo "ME   $me"
+
+BIN=/home/saulo/bin
+CONFIG=/home/saulo/.s3cfg
+S3CMD=$BIN/s3cmd
+
+#--delete-removed 
+#--exclude=GLOB
+#--rexclude=GLOB
+
+#SYNCCMD="-v -v -v -v"
+#SYNCCMD=$SYNCCMD" --dry-run "
+#SYNCCMD=$SYNCCMD" --config=$CONFIG --human-readable-sizes --guess-mime-type --reduced-redundancy --recursive --preserve --progress --continue --skip-existing --no-check-md5 --no-delete-removed"
+#SYNCCMD=$SYNCCMD" --config=$CONFIG --human-readable-sizes                   --reduced-redundancy --recursive --preserve --progress --continue --skip-existing --no-check-md5 --no-delete-removed"
+SYNCCMD=$SYNCCMD" --config=$CONFIG --human-readable-sizes --guess-mime-type --reduced-redundancy --recursive --preserve --progress --continue"
+
+S4CMD=" --dry-run "
+S4CMD=$S4CMD" --config=$CONFIG --check-md5 --human-readable-sizes --guess-mime-type --reduced-redundancy --progress"
+
+
+function printHelp {
+	cat <<EOF
+	======================================================================================================================================
+	======================================================================================================================================
+	PRESETS
+		ALL       $S4CMD
+                SYNC      $SYNCCMD
+	=====================================================+================================================================================
+	=====================================================+================================================================================
+	GENERAL                                              |
+		s3h       help                               | -
+	=====================================================+================================================================================
+	BUCKET                                               |
+		s3bmk     Make bucket                        | s3cmd mb s3://BUCKET
+		s3brm     Remove bucket                      | s3cmd rb s3://BUCKET
+		s3du      Disk usage by buckets              | s3cmd du [s3://BUCKET[/PREFIX]]
+		s3info    Get various information            | s3cmd info s3://BUCKET[/OBJECT]
+		          about Buckets or Files             |
+	=====================================================+================================================================================
+	FILES                                                |
+		s3ls      List objects or buckets            | s3cmd ls [s3://BUCKET[/PREFIX]]
+		s3lsa     List all object in all buckets     | -
+		s3put     Put file into bucket               | s3cmd put FILE [FILE...] s3://BUCKET[/PREFIX]
+		s3get     Get file from bucket               | s3cmd get s3://BUCKET/OBJECT LOCAL_FILE
+		s3rm      Delete file from bucket            | 3cmd del s3://BUCKET/OBJECT
+		s3sync    Synchronize a directory tree to S3 | 3cmd sync LOCAL_DIR s3://BUCKET[/PREFIX] or s3://BUCKET[/PREFIX] LOCAL_DIR
+		s3acl     Modify Access control list         | s3cmd setacl s3://BUCKET[/OBJECT]
+                          for Bucket or Files                |
+	=====================================================+================================================================================
+	OBJECT                                               |
+		s3cp      Copy object                        | s3cmd cp s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
+		s3mv      Move object                        | s3cmd mv s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
+	=====================================================+================================================================================
+	OTHER                                                |
+		s3sign    Sign arbitrary string using        | s3cmd sign STRING-TO-SIGN
+		          the secret key                     |
+		s3log     Enable/disable bucket ac. logging  | s3cmd accesslog s3://BUCKET
+		s3fix     Fix invalid file names in a bucket | 3cmd fixbucket s3://BUCKET[/PREFIX]
+	=====================================================+================================================================================
+	WEB                                                  |
+		s3webmk   Create Website from bucket         | s3cmd ws-create s3://BUCKET
+		s3webrm   Delete Website                     | s3cmd ws-delete s3://BUCKET
+		s3webinfo Info about Website                 | s3cmd ws-info s3://BUCKET
+	=====================================================+================================================================================
+	CLOUD FRONT                                          |
+		s3cfls    List distribution points           | -
+		s3cfinfo  Display distribution               | s3cmd cfinfo [cf://DIST_ID]
+		          point parameters                   |
+		s3cfmk	  Create distribution point          | s3cmd cfcreate s3://BUCKET
+		s3cfrm    Delete distribution point          | s3cmd cfdelete cf://DIST_ID
+		s3cfmod   Change distribution parameters     | s3cmd cfmodify cf://DIST_ID
+		s3cfinval Display invalidation               | s3cmd cfinvalinfo cf://DIST_ID[/INVAL_ID]
+		          request(s) status                  |
+	======================================================================================================================================
+	======================================================================================================================================
+EOF
+}
+
+
+if [[ "$me" == "$SELF" ]]; then
+	for name in s3h s3bmk s3brm s3du s3info s3ls s3lsa s3put s3get s3rm s3sync s3acl s3cp s3mv s3sign s3log s3fix s3webmk s3webrm s3webinfo s3cfls s3cfinfo s3cfmk s3cfrm s3cfmod s3cfinval ;
+	do
+		DST=$BIN/$name
+		#echo "  DST $DST"
+		if [[ ! -e "$DST" ]]; then
+			ln -s $BIN/$SELF $DST
+			echo "    CREATING $DST"
+		else
+			#echo "    SKIPPING $DST. EXISTS"
+			if [[ "$1" == "remove" ]]; then
+				echo "    REMOVING $DST"
+				unlink $DST
+			fi
+		fi
+	done
+fi
+
+
+
+
+if [[ "$me" == "s3h" || "$me" == "$SELF" ]]; then
+	# show help
+	printHelp
+	exit
+fi
+
+if [[ -z "$@" && $me != "s3ls" && $me != "s3cfls" && $me != "s3lsa" ]]; then
+	printHelp
+	echo "NO PARAMETERS PASSED. QUITTING"
+	exit
+fi
+
+
+
+######################
+# BUCKET
+######################
+if [[ "$me" == "s3bmk" ]]; then
+	#  Make bucket
+	#      s3cmd mb s3://BUCKET
+	CMDF="$S3CMD $S4CMD mb $@"
+fi
+
+if [[ "$me" == "s3brm" ]]; then
+	#  Remove bucket
+	#      s3cmd rb s3://BUCKET
+	CMDF="$S3CMD $S4CMD rb $@"
+fi
+
+if [[ "$me" == "s3du" ]]; then
+	#  Disk usage by buckets
+	#      s3cmd du [s3://BUCKET[/PREFIX]]
+	CMDF="$S3CMD $S4CMD du $@"
+fi
+
+if [[ "$me" == "s3info" ]]; then
+	#  Get various information about Buckets or Files
+	#      s3cmd info s3://BUCKET[/OBJECT]
+	CMDF="$S3CMD $S4CMD info $@"
+fi
+
+
+
+######################
+# FILES
+######################
+if [[ "$me" == "s3ls" ]]; then
+	#  List objects or buckets
+	#      s3cmd ls [s3://BUCKET[/PREFIX]]
+	CMDF="$S3CMD $S4CMD ls $@"
+fi
+
+if [[ "$me" == "s3lsa" ]]; then
+	#  List all object in all buckets
+	#      s3cmd la 
+	CMDF="$S3CMD $S4CMD la $@"
+fi
+
+if [[ "$me" == "s3put" ]]; then
+	#  Put file into bucket
+	#      s3cmd put FILE [FILE...] s3://BUCKET[/PREFIX]
+	CMDF="$S3CMD $S4CMD put $@"
+fi
+
+if [[ "$me" == "s3get" ]]; then
+	#  Get file from bucket
+	#      s3cmd get s3://BUCKET/OBJECT LOCAL_FILE
+	CMDF="$S3CMD $S4CMD get $@"
+fi
+
+if [[ "$me" == "s3rm" ]]; then
+	#  Delete file from bucket
+	#      s3cmd del s3://BUCKET/OBJECT
+	CMDF="$S3CMD $S4CMD del $@"
+fi
+
+if [[ "$me" == "s3sync" ]]; then
+	#  Synchronize a directory tree to S3
+	#      s3cmd sync LOCAL_DIR s3://BUCKET[/PREFIX] or s3://BUCKET[/PREFIX] LOCAL_DIR
+	CMDF="$S3CMD $SYNCCMD sync $@"
+fi
+
+if [[ "$me" == "s3acl" ]]; then
+	#  Modify Access control list for Bucket or Files
+	#      s3cmd setacl s3://BUCKET[/OBJECT]
+	CMDF="$S3CMD $S4CMD setacl $@"
+fi
+
+
+
+######################
+# OBJECTS
+######################
+if [[ "$me" == "s3cp" ]]; then
+	#  Copy object
+	#      s3cmd cp s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
+	CMDF="$S3CMD $S4CMD cp $@"
+fi
+
+if [[ "$me" == "s3mv" ]]; then
+	#  Move object
+	#      s3cmd mv s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
+	CMDF="$S3CMD $S4CMD mv $"
+fi
+
+
+
+######################
+# OTHERS
+######################
+if [[ "$me" == "s3log" ]]; then
+	#  Enable/disable bucket access logging
+	#      s3cmd accesslog s3://BUCKET
+	CMDF="$S3CMD $S4CMD accesslog $@"
+fi
+
+if [[ "$me" == "s3sign" ]]; then
+	#  Sign arbitrary string using the secret key
+	#      s3cmd sign STRING-TO-SIGN
+	CMDF="$S3CMD $S4CMD sign $@"
+fi
+
+if [[ "$me" == "s3fix" ]]; then
+	#  Fix invalid file names in a bucket
+	#      s3cmd fixbucket s3://BUCKET[/PREFIX]
+	CMDF="$S3CMD $S4CMD fixbucket $@"
+fi
+
+
+
+######################
+# WEB
+######################
+if [[ "$me" == "s3webmk" ]]; then
+	#  Create Website from bucket
+	#      s3cmd ws-create s3://BUCKET
+	CMDF="$S3CMD $S4CMD ws-create $@"
+fi
+
+if [[ "$me" == "s3webrm" ]]; then
+	#  Delete Website
+	#      s3cmd ws-delete s3://BUCKET
+	CMDF="$S3CMD $S4CMD ws-delete $@"
+fi
+
+if [[ "$me" == "s3webinfo" ]]; then
+	#  Info about Website
+	#      s3cmd ws-info s3://BUCKET
+	CMDF="$S3CMD $S4CMD ws-info $@"
+fi
+
+
+
+######################
+# CLOUD FRONT
+######################
+if [[ "$me" == "s3cfls" ]]; then
+	#  List CloudFront distribution points
+	#      s3cmd cflist
+	CMDF="$S3CMD $S4CMD cflist $@"
+fi
+
+if [[ "$me" == "s3cfinfo" ]]; then
+	#  Display CloudFront distribution point parameters
+	#      s3cmd cfinfo [cf://DIST_ID]
+	CMDF="$S3CMD $S4CMD cfinfo $@"
+fi
+
+if [[ "$me" == "s3cfmk" ]]; then
+	#  Create CloudFront distribution point
+	#      s3cmd cfcreate s3://BUCKET
+	CMDF="$S3CMD $S4CMD cfcreate $@"
+fi
+
+if [[ "$me" == "s3cfrm" ]]; then
+	#  Delete CloudFront distribution point
+	#      s3cmd cfdelete cf://DIST_ID
+	CMDF="$S3CMD $S4CMD cfdelete $@"
+fi
+
+if [[ "$me" == "s3cfmod" ]]; then
+	#  Change CloudFront distribution point parameters
+	#      s3cmd cfmodify cf://DIST_ID
+	CMDF="$S3CMD $S4CMD cfmodify $@"
+fi
+
+if [[ "$me" == "s3cfinval" ]]; then
+	#  Display CloudFront invalidation request(s) status
+	#      s3cmd cfinvalinfo cf://DIST_ID[/INVAL_ID]
+	CMDF="$S3CMD $S4CMD cfinvalinfo $@"
+fi
+
+echo $CMDF
+eval $CMDF

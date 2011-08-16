@@ -1,0 +1,6 @@
+PERL - ANYDATA HASH EXPORTER
+http://search.cpan.org/~jzucker/AnyData-0.10/AnyData/Format/XML.pm
+PERL - PERL HASH TO XML
+http://www.perlmonks.org/?displaytype=print;node_id=705021;replies=1
+PERL - MERGING HASHES
+http://docstore.mik.ua/orelly/perl/cookbook/ch05_11.htm

@@ -1,0 +1,127 @@
+<root>
+	<bkpJob>
+		<enableRDiff>		1		</enableRDiff>
+		<sleepGraceTime>	1000	</sleepGraceTime>
+		<clean>				2 		</clean>
+	</bkpJob>
+
+
+	<blast>
+		<exec>	1	</exec>
+		<run>	1	</run>
+    </blast>
+    <cgh>
+		<exec>	1	</exec>
+		<run>	1	</run>
+    </cgh>
+    <desktop>
+        <exec>	1	</exec>
+		<run>	1	</run>
+    </desktop>
+    <genome>
+        <exec>	1	</exec>
+		<run>	1	</run>
+    </genome>
+	<kruise>
+        <exec>	1	</exec>
+		<run>	1	</run>
+    </kruise>
+    <rolf>
+		<exec>	1	</exec>
+		<run>	1	</run>
+    </rolf>
+    <srv-data-cbs>
+        <exec>	1	</exec>
+		<run>	1	</run>
+    </srv-data-cbs>
+    <srv-data-saulo>
+        <exec>	1	</exec>
+		<run>	1	</run>
+    </srv-data-saulo>
+    <taxonomy>
+        <exec>	1	</exec>
+		<run>	1	</run>
+    </taxonomy>
+    <zips>
+        <exec>	1	</exec>
+		<run>	1	</run>
+    </zips>
+</root>
+
+
+
+<!--
+    'blast.exec'                                  => '1', READ THE INFO
+    'blast.run'                                   => '1', RUN THE COMMAND
+    'blast.preExec'                               => '', COMMAND TO BE RUN BEFORE BACKUP ANALYSIS
+    'blast.posExec'                               => '', COMMAND TO BE RUN AFTER BACKUP ANALYSIS
+    'blast.preRun'                                => '', COMMAND TO BE RUN BEFORE BACKUP RUN
+    'blast.posRun'                                => '', COMMAND TO BE RUN AFTER BACKUP RUN
+    'blast.baseFolder'                            => '/home/saulo/Desktop/blast',
+    'blast.addUnknown'                            => '1', ADD NOT CLEARLY NEGATED FILES
+    'blast.autoclean'                             => '1', AUTOCLEAN OLD BACKUPS. IF > 1 VALUE DENOTES NUMBER OF WEEKS OLD TO BE DELETED
+    'blast.include.ext.ext0'                      => '.pl',
+    'blast.include.folder.folder0'                => 'cgh',
+    'blast.include.folder.folder1'                => 'test',
+    'blast.exclude.ext.ext0'                      => '.xml',
+    'blast.exclude.ext.ext1'                      => '.log',
+    'blast.exclude.ext.ext2'                      => '.nsq',
+    'blast.exclude.ext.ext3'                      => '.fasta',
+    'blast.exclude.folder.folder0'                => 'ferry',
+    'blast.byFolder.byFolder0.folder'             => 'Tremella',
+    'blast.byFolder.byFolder0.include.ext.ext0'   => '.xml',
+    'blast.byFolder.byFolder0.exclude.ext.ext0'   => '.fasta',
+    'blast.byFolder.byFolder0.exclude.ext.ext1'   => '.README',
+    'blast.byFolder.byFolder0.exclude.ext.ext2'   => '.txt',
+-->
+
+<!--
+    <project>
+        <exec></exec>
+		<run></run>
+		<preExec></preExec>
+		<posExec></posExec>
+		<preRun></preRun>
+		<posRun></posRun>
+		<baseFolder></baseFolder>
+		<addUnkown>1</addUnkown>
+		<autoClean> 1</autoClean>
+        <include>
+            <ext>
+                <array></array>
+            </ext>
+            <folder>
+                <array></array>
+            </folder>
+        </include>
+        <exclude>
+            <ext>
+                <array></array>
+            </ext>
+            <folder>
+                <array></array>
+            </folder>
+        </exclude>
+        <byFolder>
+            <array>
+                <folder></folder>
+                <include>
+                    <ext>
+                        <array></array>
+                    </ext>
+		    <folder>
+			<array></array>
+		    </folder>
+                </include>
+                <exclude>
+                    <ext>
+                        <array></array>
+                    </ext>
+		    <folder>
+			<array></array>
+		    </folder>
+                </exclude>
+            </array>
+        </byFolder>
+    </project>
+-->

@@ -1,0 +1,1 @@
+watch -n5 -- pkill -USR1 ^dd$ & ls -goth *.gz *.lrz 2>/dev/null

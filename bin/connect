@@ -1,0 +1,10 @@
+#!/bin/bash
+RES=`connectNfo $@`
+
+if [ $? == "0" ]; then
+	echo "$RES"
+	eval "$RES"
+else
+	echo "$RES"
+fi
+

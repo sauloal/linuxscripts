@@ -1,0 +1,16 @@
+#!/usr/local/bin/perl
+
+# Usage:
+#
+# md5sum-perl FILENAME
+
+use Digest::MD5;
+use IO::File;
+
+my $digester = Digest::MD5->new();
+my $fh = IO::File->new($ARGV[0]);
+$digester->addfile($fh);
+my $digest = $digester->hexdigest;
+my $size = -s $ARGV[0];
+
+printf ("%s %s\n",$digest,$ARGV[0]);

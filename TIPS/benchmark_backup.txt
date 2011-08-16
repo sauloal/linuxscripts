@@ -1,0 +1,116 @@
+Backup Using DD - Benchmark
+
+Several Comrpession softwares
+PUBLIC'S CHOICE
+time lrzip -L 9 -w 3 -n -o /media/BKP/root_gzip9_lrzip9_N.lrz /media/BKP/root_gzip9.gz
+
+#/media/BKP/root_gzip9.gz - compression ratio 1.156
+#real 0m17.711s
+#user 0m15.516s
+#sys 0m1.648s
+#-rw-r--r-- 1 root root 694M 2008-10-14 13:56 root_gzip9_lrzip9_N.lrz
+694/17= 40m/s +3%
+674/33= 20m/s
+
+gzip
+time dd if=/dev/sda3 | gzip -9 > /media/BKP/root_gzip9.gz
+
+#62910540+0 records in
+#62910540+0 records out
+#32210196480 bytes (32 GB) copied, 726.202 s, 44.4 MB/s
+#real 12m6.228s
+#user 9m58.492s
+#sys 1m45.836s
+#-rw-r--r-- 1 root root 802M 2008-10-14 13:08 root_gzip9.gz
+
+bzip2
+time dd if=/dev/sda3 | bzip2 -9 > /media/BKP/root_bzip9.bz2
+
+#62910540+0 records in
+#62910540+0 records out
+#32210196480 bytes (32 GB) copied, 1191.42 s, 27.0 MB/s
+#real 19m51.534s
+#user 17m17.549s
+#sys 2m4.147s
+#-rw-r--r-- 1 root root 733M 2008-10-14 14:23 root_bzip9.bz2
+
+rzip (large files zip)
+time rzip -9 -P -k -o /media/BKP/root_gzip9_rzip9.rz /media/BKP/root_gzip9.gz
+
+#/media/BKP/root_gzip9.gz - compression ratio 1.272
+#real 3m11.811s
+#user 2m56.073s
+#sys 0m5.063s
+#-rw-r--r-- 1 root root 630M 2008-10-14 13:14 root_gzip9_rzip9.rz
+
+lrzip (lzo rzip)
+time lrzip -L 9 -w 3 -l -o /media/BKP/root_gzip9_lrzip9_L.lrz /media/BKP/root_gzip9.gz
+
+#/media/BKP/root_gzip9.gz - compression ratio 1.190
+#real 0m33.594s
+#user 0m30.179s
+#sys 0m1.704s
+#-rw-r--r-- 1 root root 674M 2008-10-14 13:51 root_gzip9_lrzip9_L.lrz
+
+time lrzip -L 9 -w 3 -b -o /media/BKP/root_gzip9_lrzip9_B.lrz /media/BKP/root_gzip9.gz
+
+#/media/BKP/root_gzip9.gz - compression ratio 1.190
+#real 3m1.380s
+#user 2m58.615s
+#sys 0m2.704s
+#-rw-r--r-- 1 root root 674M 2008-10-14 13:55 root_gzip9_lrzip9_B.lrz
+
+lrzip configuration benchmark
+            #time lrzip -L 9 -w 12 -n -o /media/BKP/root_gzip9_lrzip9_N.lrz /media/BKP/root_gzip9.gz
+                #/media/BKP/root_gzip9.gz - compression ratio 1.241
+                #real    0m22.752s
+                #user    0m20.013s
+                #sys     0m1.609s
+                #-rw-r--r-- 1 root root 646M 2008-10-14 13:44 root_gzip9_lrzip9_N.lrz
+        
+            #time lrzip -L 9 -w 9 -n -o /media/BKP/root_gzip9_lrzip9_L.lrz /media/BKP/root_gzip9.gz
+                #/media/BKP/root_gzip9.gz - compression ratio 1.241
+                #real    0m22.862s
+                #user    0m20.024s
+                #sys     0m1.577s
+                #-rw-r--r-- 1 root root 646M 2008-10-14 13:38 root_gzip9_lrzip9_N.lrz
+        
+            #time lrzip -L 9 -w 6 -n -o /media/BKP/root_gzip9_lrzip9_L.lrz /media/BKP/root_gzip9.gz
+                #/media/BKP/root_gzip9.gz - compression ratio 1.192
+                #real    0m21.964s
+                #user    0m18.671s
+                #sys     0m1.650s
+                #-rw-r--r-- 1 root root 673M 2008-10-14 13:39 root_gzip9_lrzip9_N.lrz
+        
+            #time lrzip -L 9 -w 5 -n -o /media/BKP/root_gzip9_lrzip9_L.lrz /media/BKP/root_gzip9.gz
+                #/media/BKP/root_gzip9.gz - compression ratio 1.127
+                #real    0m19.488s
+                #user    0m16.681s
+                #sys     0m1.728s
+                #-rw-r--r-- 1 root root 712M 2008-10-14 13:42 root_gzip9_lrzip9_N.lrz
+
+
+DID NOT WORK
+
+pbzip (paralel bzip2)
+#time dd if=/dev/sda3 | pbzip2 -9 > /media/BKP/root_pbzip9.bz2
+
+
+7zip
+#time dd if=/dev/sda3 | 7za a -si -mx=9 /media/BKP/root_7zip9.7z
+#       -m0=lzma lzma method
+#       -mx=9    level of compression = 9 (Ultra)
+#       -mfb=64  number of fast bytes for LZMA = 64
+#       -md=32m  dictionary size = 32 megabytes
+
+
+lzop
+#time dd if=/dev/sda3 | lzop -9 > /media/BKP/root_lzo9.lzo
+
+#46904449+0 records in
+#46904448+0 records out
+#24015077376 bytes (24 GB) copied, 994.255 s, 24.2 MB/s
+#real 16m34.264s
+#user 14m35.295s
+#sys 1m22.690s
+#-rw-r--r-- 1 root root 912M 2008-10-14 14:54 root_lzo9.lzo

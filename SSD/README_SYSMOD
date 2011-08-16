@@ -1,0 +1,42 @@
+Sys Modifications
+http://www.brighthub.com/computing/linux/articles/9170.aspx
+The simplest tweak is to mount volumes using the noatime option. By default Linux will write the last accessed time attribute to files. This can reduce the life of your SSD by causing a lot of writes. The noatime mount option turns this off.
+Open your fstab file:
+
+sudo gedit /etc/fstab
+
+Ubuntu uses the relatime option by default. For your SSD partitions (formatted as ext3), replace relatime with noatime in fstab. Reboot for the changes to take effect.
+Run this command to get the current scheduler for a disk and the alternative options:
+
+cat /sys/block/sda/queue/scheduler
+
+You’ll probably have four options; the one in brackets is currently being used by the disk specified in the previous command:
+
+noop anticipatory deadline [cfq]
+
+Two of these are better suited to SSD drives: noop and deadline. Using one of these in the same situation, the application will still hang but only for a few seconds instead of until the disk is free again. Not great, but much better than cfq.
+Here’s how to change the I/O scheduler of a disk to deadline:
+
+sudo -i echo deadline > /sys/block/sda/queue/scheduler
+
+You can replace sda with the disk you want to change. This change is temporary and will be reset when you reboot.
+If you’re using the deadline scheduler, there’s another option you can change for the SSD. This command is also temporary and also is a per-disk option:
+
+sudo -i echo 1 > /sys/block/sda/queue/iosched/fifo_batch
+
+
+
+
+Write Back
+http://feedblog.org/2007/08/08/the-noatime-mount-option-considered-harmful/
+noatime,data=writeback’
+
+
+
+
+SSD Peformance With Different File Systems
+http://venublog.com/2009/03/12/ssd-peformance-with-different-file-systems/
+
+
+
+

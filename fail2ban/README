@@ -1,0 +1,14 @@
+yum install fail2ban
+fail2ban-client -x status
+fail2ban-client -x start
+fail2ban-client -x stop
+fail2ban-client -x status ssh-iptables
+fail2ban-client -x status apache-badurl
+
+ln -s /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+/etc/fail2ban/filter.d/apache-badurl.conf
+/etc/fail2ban/filter.d/sshd.conf
+/etc/fail2ban/fail2ban.conf
+/etc/fail2ban/jail.conf
+/etc/fail2ban/action.d/iptabes.conf

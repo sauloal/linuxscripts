@@ -1,0 +1,2 @@
+#!/bin/bash
+suc 'modprobe -r usb_storage; modprobe usb_storage'

@@ -1,0 +1,175 @@
+IBM tips
+
+Speaking UNIX, Part 1: Command the power of the command line
+http://www.ibm.com/developerworks/aix/library/au-unix-commandline/index.html?S_TACT=105AGX20&S_CMP=EDU
+()
+find 		plumbs the depths of the named directory -- in this case, the file system starting at . or dot (shorthand for
+			the current working directory) -- and emits the names of all entries that match the given criteria. Here, 
+			-type f directs find to discover only plain files.
+sort		as its name implies, processes a list and emits a new list that's sorted alphabetically.
+uniq 		(pronounced "unique") scans a list, comparing adjacent elements in the list and removing any duplicates. 
+			For instance, suppose you have this list:
+
+
+Speaking UNIX, Part 2: Working smarter, not harder
+http://www.ibm.com/developerworks/aix/library/au-speakingunix2.html?S_TACT=105AGX20&S_CMP=EDU
+()
+Wildcards and patterns
+Environment variables
+Aliases and startup files
+
+
+Speaking UNIX, Part 3: Do everything right from the command line
+http://www.ibm.com/developerworks/aix/library/au-speakingunix3.html?S_TACT=105AGX20&S_CMP=EDU
+()
+The trouble with Telnet (and others)
+"You don't need no stinkin' passwords!"
+The process of transference
+
+
+Speaking UNIX, Part 4: UNIX ownership and permissions provide for privacy and participation
+http://www.ibm.com/developerworks/aix/library/au-speakingunix4/index.html?S_TACT=105AGX20&S_CMP=EDU
+()
+The id, the ego, and the UID
+Membership has its privileges
+
+
+Speaking UNIX, Part 5: Data, data everywhere
+http://www.ibm.com/developerworks/aix/library/au-speakingunix5.html?S_TACT=105AGX20&S_CMP=EDU
+()
+Copying is the sincerest form of flattery
+Keeping in sync
+
+
+Speaking UNIX, Part 6: Automate, automate, automate!
+http://www.ibm.com/developerworks/aix/library/au-speakingunix6.html?S_TACT=105AGX20&S_CMP=EDU
+()
+Ben, just one word: "automation"
+Making a good argument
+Don't remove. Archive!
+
+
+Speaking UNIX, Part 7: Command-line locution
+http://www.ibm.com/developerworks/aix/library/au-speakingunix7.html?S_TACT=105AGX20&S_CMP=EDU
+()
+Take the walking tour
+The currency exchange
+Secrets of the locals
+	$ rename 's/\.bak$//' *.bak
+	$ rename 'y/A-Z/a-z/' *
+It's not clobberin' time
+	$ alias mv=mv -i
+	$ alias rm=rm -i
+	$ set -o noclobber
+	The first two commands replace mv with mv -i and rm with rm -i, respectively, at the command line. 
+	Interactive mode forces you to confirm your action.
+
+	The third command provides a modicum of safety in the shell itself. With noclobber on, you can't accidentally
+	 overwrite a file using the > redirection operator:
+	To disable noclobber, type:
+	set +o noclobber
+
+
+Speaking UNIX, Part 8: UNIX processes
+http://www.ibm.com/developerworks/aix/library/au-speakingunix8/index.html?S_TACT=105AGX20&S_CMP=EDU
+()
+Forking around
+
+
+Speaking UNIX, Part 9: Regular expressions
+http://www.ibm.com/developerworks/aix/library/au-speakingunix9/index.html?S_TACT=105AGX20&S_CMP=EDU
+()
+	grep -v -i 'spider' heroes.txt
+		prints every line except those that contain the string spider:
+
+
+Speaking UNIX, Part 10: Customize your shell
+http://www.ibm.com/developerworks/aix/library/au-speakingunix10/index.html?S_TACT=105AGX20&S_CMP=EDU
+()
+	Here, the quirky command line ^heroes^villains substitutes the word villains for heroes in the immediately 
+	previous command (the default, if a numbered command in the history list isn't provided) and runs the result, 
+	ls -l villians.txt. Consult your shell's documentation for its syntax for command-line substitutions.
+		$ ls -l heroes.txt
+		-rw-r--r--   1 strike  strike  174 Mar  1 11:25 heroes.txt
+		$ ^heroes^villains
+		ls -l villians.txt 
+		villians.txt
+
+
+Speaking UNIX, Part 11: Ramble around the UNIX file system
+http://www.ibm.com/developerworks/aix/library/au-speakingunix11/index.html?S_TACT=105AGX20&S_CMP=EDU
+
+Speaking UNIX, Part 12: Do-it-yourself projects
+http://www.ibm.com/developerworks/aix/library/au-speakingunix12/index.html?S_TACT=105AGX20&S_CMP=EDU
+
+Speaking UNIX, Part 13: Ten more command-line concoctions
+http://www.ibm.com/developerworks/aix/library/au-speakingunix13/index.html?S_TACT=105AGX20&S_CMP=EDU
+()
+	$ printenv
+	...
+	EDITOR=vi
+	...
+	$ EDITOR="pico" less bigfile
+	This combination pages bigfile in less. If you type v in less to edit the file, pico is launched instead of vi. 
+
+	  You can find copies of Perl in both /usr/bin and /usr/local/bin. To find which Perl you're using, type type perl.
+	$ perl -v 
+	This is perl, v5.8.7 built for darwin-2level
+	$ type perl
+	perl is /use/local/bin/perl
+	$ type -a perl
+	perl is /usr/local/bin/perl
+	perl is /usr/bin/perl
+	$ type -a -w perl
+	perl: command
+	perl: command
+	
+	$ find . -type f -print0 | xargs -0 ls -1
+	./Business Plan 2007
+	./Expense Report
+	./Pictures from Spain
+
+	$ find . -iname '*music*' -type f -follow -print 
+
+	The ps command runs (listing the user's current processes), followed by w (which shows who is using the machine), 
+	and the collected output is captured in a file. 	
+	$ { ps; w } > state.`date '+%F'`
+
+	export LESS="-Nmsx4"
+		* -N displays line numbers.
+		* -m displays the current position in the file as a percentage.
+		* s "squeezes," or reduces, multiple blank lines into a single blank line.
+		* -x4 sets a tab stop every four spaces.
+
+
+Speaking UNIX, part 14: 10 great tools for any UNIX system
+http://www.ibm.com/developerworks/aix/library/au-spunix_greattools/index.html?S_TACT=105AGX20&S_CMP=EDU
+Table 1. Prominent UNIX tools
+()
+Name		Purpose
+Cygwin		A UNIX-like shell and build environment for the Windows® operating system.
+fish			A highly interactive shell with automatic expansion and colored syntax for command names, options, and
+				file names.
+locate		Build and search a database of all files
+rename		Rename large collections of files en masse
+rsync		Efficiently synchronize files and directories, locally and remotely
+Screen		Create and manage virtual, persistent consoles
+Squirrel	A cross-platform scripting shell
+tac			Print input in reverse order, last line first (tac is the reverse of cat)
+type		Reveal whether a command is an alias, an executable, a shell built in, or a script
+wget		Download files using the command line
+zsh			An advanced shell featuring automatic completion, advanced redirection operands, and advanced substitutions 
+
+apropos		Find a command with apropos
+dc				Run a calculation on the command line
+pgrep			Find processes with pgrep
+pwgen			Generate secure passwords with pwgen
+multitail		Watch many files with multitail
+7zip			Compress and extract almost anything with 7zip
+zcat			View compressed files with zcat
+curl			Surf the Web, conquer the Internet, make world peace with cURL 
+sqlite			SQLite: A database for most occasions
+xampp			Grab XAMPP, an off-the-shelf Web stack: apache, perl, mysql, php
+lighttpd		Go small with the lighttpd server
+
+

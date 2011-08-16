@@ -1,0 +1,21 @@
+Installation
+============
+Unpack wget4web-1.0.tar.gz. Copy directory wget4web in cgi-bin
+directory in your Web server. Configuration files are located
+in the directory cgi-bin/wget4web/data/ :
+
+    * info.cgi - directory paths, primary settings
+    * users.cgi - list of users. File format:
+      user_name|password[|admin]
+      For example by default register administrator Black with
+      password qwerty and user Jack with password 12345. You must
+      change this logins/passwords to yours.
+
+I recommend for work with downloaded files to create a new user
+without shell (for that write /bin/exit in shell setting) and ftp
+access. In home directory to create subdirectories files (permissions
+777), logs (permissions 755, the owner coincide with the owner of Web
+server) and tasks (permissions 755, the owner coincide with the owner
+of Web server). Then all who knows login/password of created user can
+take downloaded file on ftp and delete it (also as the other users),
+but can not change service information.

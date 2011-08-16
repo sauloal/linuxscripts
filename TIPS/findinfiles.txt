@@ -1,0 +1,45 @@
+http://maratux.blogspot.com/2009/06/bash-tricks-ii-repetitive-tasks-on.html
+
+Bash Tricks II: repetitive tasks on files
+It's been a while since I wrote for the last time. I found a job (finally) and it's eating up most of my time.
+
+Anyway, I had already written a piece on repetitive tasks before. Yesterday I had to do a thing that required another set of repetitive tricks. I had to find a file that could be included in a number (huge number) of compressed files. Some where named .tar.gz, others where tgz. I didn't want to spend the next month checking each compressed file to see if my target file was there. So I made a one-liner that did the whole thing for me.
+
+First Attempt
+
+( find /mnt/tmp/ -iname '*'.tgz; find /mnt/tmp/ -iname '*'.tar.gz; ) | while read filename; do lines=`tar tzf $filename | grep -i file-pattern | wc -l`; if [ $lines -gt 0 ]; then echo $filename; fi; done
+
+First we have the ()s. These little kids let you run various commands and tie together their outputs so that they make up a single output.
+
+Second we have the while read variable; do x; y; z; done. This construct allows us to read from the standard output line by line placing the content of each line in a variable (multiple variables can be used, in that case a single word from the standard input will be placed in each variable). In our case, we used $filename as our variable (be careful not to use $ on the while read).
+
+Then the ``s. These kids allow us to run a command so that its output can be assigned. In our case, we are listing the files of a tgz file, grepping to find the pattern of the file we are looking for and then counting the lines that come out of grep. The number of lines is what is saved in the variable $lines.
+
+Finally, we are testing to see if the number is lines is greater than 0. If it is, we print the name of the file where we found the file pattern we were looking for.
+
+Second Attempt
+
+Now let's try something a little bit different (though with the same pattern of file search). I have a number of ISOs saved in a box and each one of them has a number of RPMs inside of them. I have to look for this same file I was looking for before.
+
+Basically, it's the same thing we did before, the only thing that's changing is that we will use another level of nesting so that we can mount/umount the iso files. Let's see:
+
+find /var/isos/ -iname '*'.iso | while read iso; do mount -o loop,ro $iso /mnt/tmp; find /mnt/tmp/ -iname '*.rpm' | while read rpm; do lines=`rpm -qlp $rpm | grep -i file-pattern | wc -l`; if [ $lines -gt 0 ]; then echo $iso $rpm; fi; done; umount $iso; done
+
+
+And that's it! Neat, isn't it?
+
+Now, keep in mind that if you want to do rather simple things with the files, you can ask find to execute some commands on the files it finds. In my case it would have been a little tricky (at least) to write the actions I wanted to do on each file in find's syntax, so I went for the piping solution. 
+
+The problem with this solution is it will break if filenames contain newlines since read delimits by newline. Also since no quoting on your variables will succumb to word splitting. So a file named 'big file.iso', mount will see mount -o loop,ro big /tmp and error as the file named 'big' doesnt exist and so on and to ensure no issues with dirs named 'dirs.iso' we add -type f
+
+here is an example that delimts on null character and quotes to prevent files with spaces giving any problems.
+
+while read -r -d $'\0' iso
+do
+mount -o loop,ro "$iso" /mnt/tmp
+while read -r -d $'\0' rpm
+do
+(($(rpm -qlp "$rpm" | grep -c file-pattern))) && echo "$iso $rpm"
+done < <(find /var/isos/ -type f -iname '*'.iso -print0 )
+umount "$iso"
+done < <(find /mnt/tmp/ -type f -iname '*.rpm' -print0)

@@ -1,0 +1,2 @@
+FILE=$1
+tar -cj $FILE | pv | ssh -p 443 saulo.mine.nu "tar -xj"

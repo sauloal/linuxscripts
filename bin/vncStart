@@ -1,0 +1,17 @@
+#!/bin/bash
+#SERVER=tightvncserver
+SERVER=vncserver
+#SERVER=x11vnc
+DEPTH=16
+#DEPTH=24
+#DEPTH=32
+GEOMETRY=1680x1050
+PORT=9
+DISPLAY=":0"
+OPT="-noshm -usepw"
+
+#x11vnc -display :0 -noshm -usepw
+CMD="$SERVER :$PORT -name \""$HOSTNAME"_"$USER"\" -depth $DEPTH -geometry $GEOMETRY -localhost"
+echo $CMD
+$CMD
+

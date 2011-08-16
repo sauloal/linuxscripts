@@ -1,0 +1,26 @@
+Bashrc
+
+Preservando o histórico das sessões em bash
+Colaboração: Rubens Queiroz de Almeida 
+Data de Publicação: 18 de October de 2008 
+Original
+
+Em um ambiente gráfico é comum termos várias janelas de terminal. Para cada sessão é mantido um histórico dos comandos emitidos, para facilitar a nossa vida evitando que tenhamos que redigitar comandos, às vezes longos e complexos. 
+
+O problema é que cada uma das telas que usamos mantém o seu próprio histórico, e não conseguimos reproduzir, em uma segunda janela, os comandos emitidos na primeira. Pior ainda, ao fecharmos as janelas, o histórico é gravado em disco, mas não existe, por padrão, uma forma de se preservar o histórico de todas as janelas. 
+
+Para garantir que, ao término de uma sessão, os comandos sejam adicionados a um histórico global, precisamos definir, no arquivo .bashrc, a seguinte opção: 
+
+shopt -s histappend
+
+
+Por padrão, o histórico é escrito de uma vez quando a shell é encerrada. O comando acima faz com que os comandos sejam gravadas individualmente, logo que emitidos. 
+
+O arquivo onde são gravados os comandos chama-se .bash_history. Você pode comprovar este novo comportamento, após a definição da opção histappend, abrindo uma nova shell e emitindo o comando: 
+
+tail -f .bash_history
+
+
+Você poderá comprovar que a cada comando emitido, em qualquer das janelas abertas, irá se refletir imediatamente no arquivo de histórico. 
+
+Além desta opção, é importante também definir, no arquivo .bashrc, a variável de ambiente HISTSIZE, que define o número de comandos a serem gravados. Por padrão, são armazenados 500 comandos. 

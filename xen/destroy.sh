@@ -1,0 +1,1 @@
+xm destroy wxp64

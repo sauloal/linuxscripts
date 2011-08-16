@@ -1,0 +1,50 @@
+TAB
+[saulo@SRV-FUNGI input]$ time mysql -u root -pcbscbs12 < allatonce.q
+real	300m24.519s
+user	0m0.006s
+sys	0m0.001s
+
+
+
+SQL
+[saulo@SRV-FUNGI input]$ time mysql -u root -pcbscbs12 < allatonce.sql 
+real	296m19.154s
+user	0m19.380s
+sys	0m1.979s
+
+
+
+TAB - NO INDEX
+[saulo@SRV-FUNGI input]$ time mysql -u root -pcbscbs12 < allatonce.q
+real	2m38.088s
+user	0m0.003s
+sys	0m0.006s
+
+
+
+SQL - NO INDEX
+[saulo@SRV-FUNGI input]$ time mysql -u root -pcbscbs12 < allatonce.sql 
+real	3m52.650s
+user	0m16.071s
+sys	0m1.446s
+
+
+
+SQL - NO INDEX - 5.1.30 INNODB PLUGIN 1.0.3
+[saulo@SRV-FUNGI input]$ time mysql -uroot -pcbscbs12 < allatonce.sql
+real	9m12.287s
+user	0m26.790s
+sys		0m2.582s
+[saulo@SRV-FUNGI input]$ time mysql -uroot -pcbscbs12 < all_index.q  (CREATE INDEX)
+real	22m27.235s
+user	0m0.005s
+sys		0m0.002s
+
+
+SQL - INDEX - 5.1.30 INNODB PLUGIN 1.0.3
+[saulo@SRV-FUNGI input]$ time mysql -uroot -pcbscbs12 < allatonce.sql
+real	1256m35.388s
+user	0m27.889s
+sys		0m3.155s
+
+

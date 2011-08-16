@@ -1,0 +1,17 @@
+/sbin/modprobe -r usb_ehcd
+/sbin/modprobe    usb_ehcd
+/sbin/modprobe storage
+/sbin/modprobe usb-storage
+/sbin/modprobe -r usb-storage
+/sbin/modprobe -r whci-hcd
+/sbin/modprobe -r hwa-hc
+lsusb
+
+rmmod usblp
+rmmod usb-storage
+
+insmod usblp 
+insmod usb-storage
+
+modprobe usblp
+modprobe usb-storage

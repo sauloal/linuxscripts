@@ -1,0 +1,33 @@
+Tunning
+http://blog.loxal.net/2009/04/tuning-ext4-for-performance-with.html
+As write operations on Solid State Disks (SSD) are expensive the tips below are focused on SSD usage but also apply to HDD usage as well.
+
+My Ubuntu 9.04 Jaunty /etc/fstab after a fresh installation:
+
+[...]
+UUID=d818ddf9-ff01-e21a-a67d-3ceab43a9e2b / ext4 relatime,errors=remount-ro 0 1
+UUID=0d339122-74e0-e0ea-805a-7879b1fa3172 /home ext4 relatime 0 2
+[...]
+My tuned Ubuntu 9.04 Jaunty /etc/fstab:
+
+[...]
+UUID=d818ddf9-ff01-e21a-a67d-3ceab43a9e2b / ext4 noatime,barrier=0,nobh,commit=100,nouser_xattr 0 1
+UUID=0d339122-74e0-e0ea-805a-7879b1fa3172 /home ext4 noatime,barrier=0,data=writeback,nobh,commit=100,nouser_xattr 0 2
+[...]
+
+data=writeback => The default data mode is ordered. This mode provides only meta-data journaling which is similar to the default data mode in ReiserFS, XFS, and JFS. Enabling this option on the root partition, caused an error during boot time. So enable this option only on non-root partitions!
+
+nobh => Implies data=writeback; Avoids buffer heads to data pages association.
+
+barrier => The default value is barrier=1 (activated). Deactivating write barriers in the jbd code will improve the performance. If you don't have a battery-backed storage environment, you should not deactivate this mount option.
+
+noatime => Deactivates the file access time modification which is basically a write operation that should be avoid on SSDs.
+
+relatime => This is a faster alternative to the atime (default) option. You can set it, if you need the file access times to be set. However it is still responsible for write operations which should be avoid -- especially on SSDs.
+
+commit => Increases the commit/write interval (default: 5s). Actually it is a sync operation between data and meta-data which is an important data-safety feature.
+
+nouser_xattr => Disable Extended User Attributes if you don't need them. If you are using a desktop setup at home (or in a small office network), you may not need this feature.
+
+errors=remount-ro => Many distribution add also this boot option. In fact this boot option can be omitted without any hesitation as this boot option is set by default.
+

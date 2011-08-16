@@ -1,0 +1,40 @@
+yum -y install curl
+yum -y install screen
+
+curl timkay.com/aws/aws -o aws
+chmod +x aws
+
+export SECRET1=
+export SECRET2=
+
+echo "$SECRET1" > ~/.awssecret
+echo "$SECRET2" >> ~/.awssecret
+
+echo "" >> ~/.awssecret
+chmod g-r ~/.awssecret
+chmod o-r ~/.awssecret
+
+./aws ls probe | gawk '{print $7}' | grep output2 | grep -v "folder" > files.list
+
+echo "<CreateBucketConfiguration>" > eu.xml
+echo "  <LocationConstraint>EU</LocationConstraint>" >> eu.xml
+echo "</CreateBucketConfiguration>" >> eu.xml
+echo "" >> eu.xml
+
+./aws mkdir probeus
+./aws ls probeus?location
+./aws get probeus?location
+./aws mkdir probeeu eu.xml
+./aws get probeeu?location
+
+
+
+
+
+#perl -ne 'chomp; print "$_\n"; $name = substr($_,rindex($_, "/")+1); if ( ! -f $name ) { system("./aws get probe/$_ $name")} ' files.list
+
+#perl -ne 'chomp; print "$_\n"; $name = substr($_,rindex($_, "/")+1); if ( -f $name ) { print "\tSHARED\n"; system("cat $name \| grep \",\" > shared-$name"); system("gzip -5 shared-$name"); print "\tUNIQUE\n"; system("cat $name \| grep -v \",\" > unique-$name"); system("gzip -5 unique-$name"); unlink($name); print "\tDONE\n"; } ' files.list
+
+#perl -ne 'chomp; print "$_\n"; $name = substr($_,rindex($_, "/")+1); if ( ! -f $name ) { print "DOWNLOADING\n"; system("./aws get probe/$_ $name"); } elsif ( -f $name ) { print "\tSHARED\n"; system("cat $name \| grep \",\" > shared-$name"); system("gzip -5 shared-$name"); print "\tUNIQUE\n"; system("cat $name \| grep -v \",\" > unique-$name"); system("gzip -5 unique-$name"); unlink($name); print "\tDONE\n"; } else { print "SKIPPING $name.. NOT EXISTING\n" }' files.list
+
+perl -ne 'chomp; print "$_\n"; $name = substr($_,rindex($_, "/")+1); if ( ! -f $name ) { print "DOWNLOADING\n"; system("./aws get probe/$_ $name"); } elsif ( -f $name ) { print "\tSHARED\n"; system("cat $name \| grep \",\" > shared-$name"); system("gzip -5 shared-$name"); print "\tUNIQUE\n"; system("cat $name \| grep -v \",\" > unique-$name"); system("gzip -5 unique-$name"); print "\tDONE\n"; } else { print "SKIPPING $name.. NOT EXISTING\n" }' files.list

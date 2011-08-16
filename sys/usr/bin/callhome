@@ -1,0 +1,7 @@
+USER="*****"
+HOST="*****.****.nu"
+PORT=443
+#COMMAND="ssh -c blowfish,arcfour,idea -C2Y -p $PORT ${USER}@${HOST}"
+COMMAND="ssh -c blowfish -C2Y -p $PORT ${USER}@${HOST}"
+echo ${COMMAND}
+eval ${COMMAND}

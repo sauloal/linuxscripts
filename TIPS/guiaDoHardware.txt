@@ -1,0 +1,39 @@
+DESKTOP APLICATIONS WITH JAVASCRIPT
+http://arstechnica.com/articles/paedia/javascript-gtk-bindings.ars
+WINEDOORS
+http://www.guiadohardware.net/dicas/wine-doors.html
+SSHFS
+http://www.guiadohardware.net/dicas/usando-sshfs.html
+FREENX SERVER
+http://www.guiadohardware.net/tutoriais/nx-server/
+GOOGLE APP
+http://www.guiadohardware.net/dicas/google-apps.html
+DOMINANDO O SSH - SFTP
+http://www.guiadohardware.net/tutoriais/dominando-ssh/pagina9.html
+IPOD NO LINUX
+http://www.guiadohardware.net/dicas/sincronizando-ipod-linux.html
+ESCREVENDO SCRIPTS DE FIREWALL
+http://www.guiadohardware.net/tutoriais/linux-escrevendo-scripts-firewall/
+INITTAB
+http://www.guiadohardware.net/dicas/linux-entendendo-configuracao-dos-servicos.html
+SERVIDOR DE ARQUIVOS
+http://www.guiadohardware.net/dicas/kpf-seu-pc-torna-servidor-arquivos-minutos.html
+ESCREVENDO SCRIPTS DE BACKUP
+http://www.guiadohardware.net/tutoriais/backup/
+DICAS VISTA
+http://www.guiadohardware.net/tutoriais/dicas-vista/
+JOHN THE RIPPER
+http://www.guiadohardware.net/dicas/john-the-ripp.html
+REDE AD-HOC
+http://www.guiadohardware.net/tutoriais/configurando-ad-hoc/
+TECLADO MULTIMIDIA
+http://www.guiadohardware.net/dicas/configurando-teclados-multimidia.html
+FREENAS
+http://www.guiadohardware.net/tutoriais/freenas/
+WEBMIN -2
+http://www.guiadohardware.net/tutoriais/webmin/
+LINHA DE COMANDO 1
+http://www.guiadohardware.net/tutoriais/linha-comando/
+LINHA DE COMANDO - 2
+http://www.guiadohardware.net/tutoriais/linha-comando2/
+

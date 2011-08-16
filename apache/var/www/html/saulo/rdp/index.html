@@ -1,0 +1,55 @@
+<html>
+ 
+<head>
+ 
+<title>ProperJavaRDP</title>
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ 
+</head>
+ 
+<body>
+ 
+ <div id="appletx">
+ 
+<h2>You may close this window when you are finished with your RDP session...</h2>
+ 
+ 
+<script>
+function generateHTML(server,username,password) {
+  var html = '<applet code="net.propero.rdp.applet.RdpApplet.class"';
+  html += '      codebase="http://java.sun.com/update/1.5.0/jinstall-1_5_0-windows-i586.cab"';
+  html += ' archive="properJavaRDP14-1.1.jar"';
+  html += ' width="640" height="480"';
+  html += 'name="ProperJavaRDP" align="center">';
+  html += '<param name="code" value="net.propero.rdp.applet.RdpApplet.class">';
+  html += '<param name="codebase" value="http://java.sun.com/update/1.5.0/jinstall-1_5_0-windows-i586.cab">';
+  html += '<param name="archive" value="properJavaRDP14-1.1.jar">';
+  html += '<param name="cabbase" value="">';
+  html += '<param name="name" value="ProperJavaRDP">';
+  html += '<param name="geometry" value="1680x1050">';
+  html += '<param name="server" value="'+server+'">';
+  html += '<param name="align" value="center">';
+  html += '<param name="port" value="3389">';
+  html += '<param name="username" value='+username+'>';
+  html += '<param name="password" value='+password+'>';
+  html += '<param name="bpp" value="24">';
+  html += '</applet>';
+  return html;
+}
+ 
+    function promptuserforservername() {
+    var server   = prompt("Server Name:","");    
+    var username = prompt("User Name:","");
+    var password = prompt("Password:","");
+    var myhtml = generateHTML(server,username,password);
+ 
+   document.getElementById("appletx")["innerHTML"] = myhtml;
+ 
+    }
+ </script>
+ 
+ <script> promptuserforservername();</script>
+</body>
+ 
+</html>

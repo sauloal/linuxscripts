@@ -1,0 +1,7 @@
+SETUP APACHE
+
+ProxyRequests On
+ProxyVia On
+ProxyPreserveHost on
+ProxyPass /stream.mp3 http://localhost:2020
+ProxyPassReverse /stream.mp3 http://localhost:2020
