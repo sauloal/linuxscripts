@@ -1,0 +1,114 @@
+        laptop => {
+		USR   => "saulo",
+                ADD   => "192.168.1.101",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 9090"
+        },
+	laptopOut => {
+                USR   => "saulo",
+                ADD   => "add",
+                PORT  => "222",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts . " -D 9090"
+        },
+
+
+
+	nettop => {
+                USR   => "saulo",
+                ADD   => "192.168.1.100",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 9091"
+        },
+	nettopOut => {
+                USR   => "saulo",
+                ADD   => "add",
+                PORT  => "443",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 9091"
+        },
+
+
+
+	io => {
+               	USR   => "root",
+                ADD   => "192.168.1.102",
+                PORT  => "22",
+                OPTS  => $defaultOpts  . " -D 9092"
+        },
+
+
+
+	dev1 => {
+                USR   => "aflit001",
+                ADD   => "work",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 9093"
+        },
+	dev1out => {
+                USR   => "aflit001",
+                ADD   => "work",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",,
+                HOP   => "ftpab",
+                OPTS  => $defaultOpts  . " -D 9093"
+        },
+
+
+
+	c64 => {
+                USR   => "c2prod",
+                ADD   => "workc",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 9094"
+        },
+	c64out => {
+                USR   => "c2prod",
+                ADD   => "workc",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",,
+                HOP   => "ftpab",
+                OPTS  => $defaultOpts  . " -D 9094"
+        },
+
+
+
+	c2 => {
+                USR   => "c2prod",
+                ADD   => "workc2",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 9095"
+        },
+	c2out => {
+                USR   => "c2prod",
+                ADD   => "workc2",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",,
+                HOP   => "ftpab",
+                OPTS  => $defaultOpts  . " -D 127.0.0.1:9095"
+        },
+
+
+
+	ftpab => {
+                USR   => "aflit001",
+                ADD   => "workf",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 127.0.0.1:9096"
+        },
+
+
+
+	fungi => {
+                USR   => "saulo",
+                ADD   => "workold",
+                PORT  => "22",
+                IDENT => "~/.ssh/id_rsa_passwordless",
+                OPTS  => $defaultOpts  . " -D 9097"
+        },
