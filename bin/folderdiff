@@ -1,0 +1,84 @@
+#! /usr/bin/perl -w
+use strict;
+use warnings;
+use Cwd;
+
+my $cwd = cwd;
+print "Current directory: $cwd\n";
+my $hold = {};
+my ($odir, $cdir) = (shift, shift);
+
+foreach my $dir ($odir, $cdir) {
+	print "$dir\n";
+	chdir $dir || die "Error: Could not chdir to $dir\n";
+	my @list = `find . -type f -exec md5sum {} \\;`;
+	my $h = {};
+
+	foreach (@list) {
+		#print $_, "\n";
+		if ( /^([^ ]+) (.*)$/ ) {
+			my $md5   = $1;
+			my $fn    = $2;
+			$h->{$fn} = $md5;
+		}
+	}
+
+	$hold->{$dir} = $h;
+	chdir $cwd;
+}
+
+my @okeys = keys %{$hold->{$odir}};
+print "Note: Original Directory has ", $#okeys + 1, " files\n";
+my @ckeys = keys %{$hold->{$cdir}};
+print "      Compared Directory has ", $#ckeys + 1, " files\n\n\n";
+
+my (@kdne, @md5mm, @exk);
+for my $fn (@okeys) {
+	if ( ! exists ${$hold->{$cdir}}{$fn} ) {
+		push @kdne, $fn;
+		next;
+	}
+
+	if ( ${$hold->{$cdir}}{$fn} ne ${$hold->{$odir}}{$fn} ) {
+		push @md5mm, $fn;
+	}
+}
+
+
+
+
+
+for (@ckeys) {
+	if (!exists ${$hold->{$odir}}{$_}) {
+		push @exk, $_;
+	}
+}
+
+#LOGGING:
+print "Error Type A: missing file or read denied in $cdir ...\n";
+if(!@kdne) {
+	print " ... no errors\n";
+} else {
+	print "ErrorTypeA $_\n" for @kdne;
+}
+
+
+print "\n\n";
+print "Error Type B: md5 mismatch between $cdir and $odir ...\n";
+if(!@md5mm) {
+	print " ... no errors\n";
+} else {
+	print "ErrorTypeB $_\n" for @md5mm;
+}
+
+
+print "\n\n";
+print "Error Type C: Extra/modified paths in $cdir ...\n";
+if(!@exk) {
+	print " ... no errors\n";
+} else {
+	print "ErrorTypeC $_\n" for @exk;
+}
+
+
+print "\n\n END OF REPORT\n\n";

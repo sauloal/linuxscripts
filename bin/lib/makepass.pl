@@ -6,8 +6,9 @@ use File::stat;
 use MIME::Base64;
 use Digest::SHA qw(sha512_base64);
 
-my $inFile = $ARGV[0];
-$inFile    = abs_path($inFile);
+my $inFile  = $ARGV[0];
+$inFile     = abs_path($inFile);
+my $verbose = 1;
 my %hash;
 
 if ( ! -f $inFile )
@@ -24,6 +25,7 @@ if ( ! -f $inFile )
 		{
 			my $k     = $1;
 			my $v     = $2;
+			print " K $k V $v\n" if $verbose;
 			$hash{$k} = $v;
 			$sum     += length($k) + 3 + length($v) + 1;
 		}
@@ -37,9 +39,11 @@ if ( ! -f $inFile )
 		my $hKey    = sha512_base64("$k$v");
                 my $vv      = xor_encode($hash{$k}, $hKey);
 		my $vvv     = encode_base64($vv);
+		   $vvv     =~ s/\n//g;
+		#print "  V='$v' VV='$vv' VVV='$vvv'\n";
 		chomp $vvv;
 		print FILE "$k = $vvv\n";
-		print "$k = $vvv\n";
+		#print "$k = $vvv\n";
 	}
 	close FILE;
 
@@ -66,10 +70,12 @@ if ( ! -f $inFile )
                 my $hKey    = sha512_base64("$key$k");
                 my $vv      = xor_encode($hash{$k}, $hKey);
                 my $vvv     = encode_base64($vv);
+		   $vvv     =~ s/\n//g;
+		print "  V='$v' VV='$vv' VVV='$vvv'\n";
 		chomp $vvv;
                 print FILE "$k = $vvv\n";
-                #print "$k = $v\n";
-	        #print "\tK '$k' V '$v' ENC '$encoded' DEC '$decoded'\n";
+                print "$k = $v\n" if $verbose; 
+	        #print "\tK '$k' V '$v' ENC '$encoded' DEC '$decoded'\n" if $verbose;
         }
         close FILE;
 }
