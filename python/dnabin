@@ -1,0 +1,270 @@
+#!/usr/bin/python 
+from string import maketrans
+
+Test    = False
+#Test    = True
+verbose = Test
+
+#CODE 3 : 0.9850 DECODE 3 : 1.8379
+#                DECODE 4 : 1.4173
+#                DECODE 5 : 1.3277
+#CODE 6 : 0.9134 DECODE 6 : 1.2237
+#                DECODE 7 : 1.6294
+
+
+strs = ("ACGTACGTACGTACGTACGTACGTACGTACG",
+	"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"CCAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"AGAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"ATAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+	"CCCCCCCAAAAAAAAAAAAAAAACCCCCCCC",
+	"AAAAAAAAAAAAAAAAGGGGGGGGGGGGGGG",
+	"TTTTTTTTTTTTTTTTAAAAAAAAAAAAAAA",
+	"TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+
+tr   = maketrans('ACGT', '0123')
+rt   = maketrans('0123', 'ACGT')
+tb   = { 'A' : '00', 'C' : '01', 'G' : '10', 'T' : '11' }
+bt   = { '00':  'A', '01':  'C', '10':  'G', '11':  'T' }
+
+
+def code6 (strg):
+	K2 = ''.join(tb[ch] for ch in strg[::1] )
+        K2 = int(K2, 2)
+	if verbose: print "\tCODEC6 SEQ '%s' DEC '%019d' BIN '%019d'" % (strg, 0, K2)
+	return K2
+
+def decode6 (nnum):
+	bina = bin(nnum)[2:]
+	bina = "0"*(62-len(bina)) + bina
+
+	seq = ''
+        for i in range(0, 62, 2): seq += bt[bina[i:i+2]]
+
+        if verbose: print "\tDECODE6 NUM '%020d' NEWNUM '%020d' SEQ '%31s' NSEQ '%31s' NUC '%31s'" % (nnum, nnum, seq, '', seq)
+	return seq
+
+def decode7 (nnum):
+	bina = bin(nnum)[2:]
+	bina = "0"*(62-len(bina)) + bina
+
+	seq = ''.join(bt[bina[i:i+2]] for i in range(0, 62, 2))
+
+        if verbose: print "\tDECODE6 NUM '%020d' NEWNUM '%020d' SEQ '%31s' NSEQ '%31s' NUC '%31s'" % (nnum, nnum, seq, '', seq)
+	return seq
+
+
+
+
+
+
+
+def code3 (strg):
+	K2 = ''.join(tb[ch] for ch in strg[::-1] )
+        K2 = int(K2, 2)
+	if verbose: print "\tCODEC3 SEQ '%s' DEC '%019d' BIN '%019d'" % (strg, 0, K2)
+	return K2
+
+def decode3 (num):
+	nnum = num
+        bina = bin(nnum)[2:]
+
+        if len(bina) % 2 != 0:
+                bina = "0"+bina
+
+	subs = []
+        for i in range(len(bina), 0, -2):
+                subs.append( bt[bina[i-2:i]] )
+
+        seq = ''.join(subs)
+	nuc = '{:A<31}'.format(seq)
+
+
+        if verbose: print "\tDECODE3 NUM '%020d' NEWNUM '%020d' SEQ '%31s' NSEQ '%31s' NUC '%31s'" % (num, nnum, seq, '', nuc)
+	return nuc
+
+def decode4 (nnum):
+        bina = bin(nnum)[2:]
+
+        if len(bina) % 2 != 0:
+                bina = "0"+bina
+
+	seq = ''
+        for i in range(len(bina), 0, -2):
+                seq = seq + bt[bina[i-2:i]] 
+
+	nuc = '{:A<31}'.format(seq)
+
+        if verbose: print "\tDECODE4 NUM '%020d' NEWNUM '%020d' SEQ '%31s' NSEQ '%31s' NUC '%31s'" % (nnum, nnum, seq, '', nuc)
+	return nuc
+
+def decode5 (nnum):
+	bina = bin(nnum)[2:]
+	bina = "0"*(62-len(bina)) + bina
+
+	seq = ''
+        for i in range(62, 0, -2): seq += bt[bina[i-2:i]]
+
+        if verbose: print "\tDECODE5 NUM '%020d' NEWNUM '%020d' SEQ '%31s' NSEQ '%31s' NUC '%31s'" % (nnum, nnum, seq, '', seq)
+	return seq
+
+
+
+
+
+
+
+
+
+
+def code2 (strg):
+	K2 = ''.join(tb[ch] for ch in strg[::-1] )
+        K2 = int((int(K2, 2) << 1) / 2)
+	if verbose: print "\tCODEC2 SEQ '%s' DEC '%019d' BIN '%019d'" % (strg, 0, K2)
+	return K2
+
+def decode2 (num):
+	nnum = num * 2
+        bina = bin(nnum)[2:-1]
+
+        if len(bina) % 2 != 0:
+                bina = "0"+bina
+
+	subs = []
+        for i in range(len(bina), 0, -2):
+                subs.append( bt[bina[i-2:i]] )
+
+        seq = ''.join(subs)
+	nuc = '{:A<31}'.format(seq)
+
+
+        if verbose: print "\tDECODE2 NUM '%020d' NEWNUM '%020d' SEQ '%31s' NSEQ '%31s' NUC '%31s'" % (num, nnum, seq, '', nuc)
+	return nuc
+
+
+
+
+
+
+
+
+
+def code1 (srtg):
+	strb = strg.translate(tr)
+	strl = len(strb)
+	j    = 	0
+
+	for i in range(0, strl):
+		p  = ((i*2)+1)
+		b  = int(strb[i:i+1]) << p
+		j += b
+
+	if ( j != 0 ):
+		v = j/2
+		if verbose: print "\tCODEC1 SEQ '%s' DEC '%019d' BIN '%019d'" % (strg, j, v)
+		return v
+	else:
+		if verbose: print "\tCODEC1 SEQ '%s' DEC '%019d' BIN '%019d'" % (strg, j, 0)
+		return 0
+
+
+
+def decode1 (num):
+	nnum = num * 2
+	bina = bin(nnum)[2:-1]
+
+	if len(bina) % 2 != 0:
+		bina = "0"+bina
+
+	seq = ""
+
+	for i in range(len(bina), 0, -2):
+		sub = bina[i-2:i]
+		dec = int(sub, 2)
+		seq = seq + str(dec)
+
+	nseq = '{:0<31}'.format(seq)
+	nuc  = nseq.translate(rt)
+
+	if verbose: print "\tDECODE1 NUM '%020d' NEWNUM '%020d' SEQ '%31s' NSEQ '%31s' NUC '%31s'" % (num, nnum, seq, nseq, nuc)
+	return nuc
+
+
+
+
+if Test:
+	for strg in (strs):
+		r1 = code1(strg)
+		r2 = code2(strg)
+		r3 = code3(strg)
+		r6 = code6(strg)
+		decode1(r1)
+		decode2(r2)
+		decode3(r3)
+		decode4(r3)
+		decode5(r3)
+		decode6(r6)
+		decode7(r6)
+else:
+	import timeit
+	strg = "ACGTACGTACGTACGTACGTACGTACGTACG"
+	strn = 2658501351799317732;
+
+	times = 10
+	num   = 100
+	num   = 100000
+
+	if False:
+		t1c    = timeit.Timer(stmt='code1("'+strg+'")', setup="from __main__ import code1")
+		t1cmin = min(t1c.repeat(times, num)),
+		t1d    = timeit.Timer(stmt='decode1('+str(strn)+')', setup="from __main__ import decode1")
+		t1dmin = min(t1d.repeat(times, num))
+		print "CODE 1 : %.4f DECODE 1 : %.4f" % (t1cmin[0], t1dmin)
+
+
+	if False:
+		t2c    = timeit.Timer(stmt='code2("'+strg+'")', setup="from __main__ import code2")
+		t2cmin = min(t2c.repeat(times, num)),
+		t2d    = timeit.Timer(stmt='decode2('+str(strn)+')', setup="from __main__ import decode2")
+		t2dmin = min(t2d.repeat(times, num))
+		print "CODE 2 : %.4f DECODE 2 : %.4f" % (t2cmin[0], t2dmin)
+
+
+	t3c    = timeit.Timer(stmt='code3("'+strg+'")', setup="from __main__ import code3")
+	t3cmin = min(t3c.repeat(times, num)),
+	t3d    = timeit.Timer(stmt='decode3('+str(strn)+')', setup="from __main__ import decode3")
+	t3dmin = min(t3d.repeat(times, num))
+	print "CODE 3 : %.4f DECODE 3 : %.4f" % (t3cmin[0], t3dmin)
+
+	t4d    = timeit.Timer(stmt='decode4('+str(strn)+')', setup="from __main__ import decode4")
+	t4dmin = min(t4d.repeat(times, num))
+	print "                DECODE 4 : %.4f" % (t4dmin)
+
+	t5d    = timeit.Timer(stmt='decode5('+str(strn)+')', setup="from __main__ import decode5")
+	t5dmin = min(t5d.repeat(times, num))
+	print "                DECODE 5 : %.4f" % (t5dmin)
+
+	t6c    = timeit.Timer(stmt='code6("'+strg+'")', setup="from __main__ import code6")
+	t6cmin = min(t6c.repeat(times, num)),
+	t6d    = timeit.Timer(stmt='decode6('+str(strn)+')', setup="from __main__ import decode6")
+	t6dmin = min(t6d.repeat(times, num))
+	print "CODE 6 : %.4f DECODE 6 : %.4f" % (t6cmin[0], t6dmin)
+
+	t7d    = timeit.Timer(stmt='decode7('+str(strn)+')', setup="from __main__ import decode7")
+	t7dmin = min(t7d.repeat(times, num))
+	print "                DECODE 7 : %.4f" % (t7dmin)
+
+
+
+#for i in range(0, 9):
+#	decode(i)
+#	decode2(i)
+#	print""
+
+print "done"
