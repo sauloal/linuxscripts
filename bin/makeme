@@ -1,0 +1,42 @@
+XFLAGS=$CFLAGS
+unset CFLAGS
+CORES=2
+
+export CFLAGS=" -g -fwrapv -Wall -mtune=native \
+        -march=native -fno-strict-aliasing -O3 -m64 -ffast-math  \
+        -DNCORE=$CORES  -mfpmath=both  -msse -msse2 -msse4 -mmmx   \
+        -ftree-loop-linear  -ftree-loop-distribution\
+        -pthread"
+
+XXFLAGS=$CXXFLAGS
+unset CXXFLAGS
+export CXXFLAGS=" -g -fwrapv -Wall -mtune=native \
+        -march=native -fno-strict-aliasing -O3 -m64 -ffast-math  \
+        -DNCORE=$CORES  -mfpmath=both  -msse -msse2 -msse4 -mmmx   \
+        -ftree-loop-linear  -ftree-loop-distribution\
+        -pthread"
+
+XPFLAGS=$CPPFLAGS
+unset CPPFLAGS
+export CPPFLAGS=" -g -fwrapv -Wall -mtune=native \
+        -march=native -fno-strict-aliasing -O3 -m64 -ffast-math  \
+        -DNCORE=$CORES  -mfpmath=both  -msse -msse2 -msse4 -mmmx   \
+        -ftree-loop-linear  -ftree-loop-distribution\
+        -pthread"
+
+echo $CPPFLAGS
+
+printenv | sort
+
+./configure --with-sse --prefix=/home/$USER/
+#./configure --with-sse 
+make -j16 $@
+
+export CFLAGS=$XFLAGS
+export CXXFLAGS=$XXFLAGS
+export CPPFLAGS=$XPFLAGS
+
+unset XFLAGS
+unset XXFLAGS
+unset XPFLAGS
+

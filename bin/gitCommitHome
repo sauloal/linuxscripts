@@ -1,0 +1,38 @@
+#!/bin/bash
+
+MACHINE=laptop
+NAME=home_$USER
+FOLDER=~
+JGITCFG=.jgit_s3_private
+BUCKET=saulo.git
+JGITBIN=/home/$USER/bin/jgit
+
+DATESTR=`date --rfc-3339=seconds | tr " |,|:|\+" _`
+LOG=~/tmp/git_$NAME\_$DATESTR.log
+
+cd $FOLDER
+
+touch $LOG
+
+git add .gitignore                            2>&1 | tee -a $LOG
+git add . -v                                  2>&1 | tee -a $LOG
+
+git status                                    2>&1 | tee -a $LOG
+
+git commit -m "$DATESTR"                      2>&1 | tee -a $LOG
+
+git config --global pack.window 25M           2>&1 | tee -a $LOG
+git config --global pack.windowMemory 25M     2>&1 | tee -a $LOG
+git config --global pack.compression 1        2>&1 | tee -a $LOG
+git config --global pack.packSizeLimit 25M    2>&1 | tee -a $LOG
+git config --global pack.deltaCacheSize 25M   2>&1 | tee -a $LOG
+git config --global pack.deltaCacheLimit 200  2>&1 | tee -a $LOG
+
+git gc                                        2>&1 | tee -a $LOG
+
+git remote add s3_$NAME amazon-s3://$JGITCFG@$BUCKET/$MACHINE\_$NAME.git 2>&1 > /dev/null
+
+$JGITBIN push s3_$NAME                        2>&1 | tee -a $LOG
+
+cd -                                          2>&1 | tee -a $LOG
+

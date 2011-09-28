@@ -71,10 +71,10 @@ if ( ! -f $inFile )
                 my $vv      = xor_encode($hash{$k}, $hKey);
                 my $vvv     = encode_base64($vv);
 		   $vvv     =~ s/\n//g;
-		print "  V='$v' VV='$vv' VVV='$vvv'\n";
+		print "  V='$v' VV='$vv' VVV='$vvv'\n" if $verbose;
 		chomp $vvv;
                 print FILE "$k = $vvv\n";
-                print "$k = $v\n" if $verbose; 
+                #print "$k = $v\n" if $verbose; 
 	        #print "\tK '$k' V '$v' ENC '$encoded' DEC '$decoded'\n" if $verbose;
         }
         close FILE;

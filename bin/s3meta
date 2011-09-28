@@ -29,60 +29,67 @@ function printHelp {
 	PRESETS
 		ALL       $S4CMD
                 SYNC      $SYNCCMD
-	=====================================================+================================================================================
-	=====================================================+================================================================================
-	GENERAL                                              |
-		s3h       help                               | -
-	=====================================================+================================================================================
-	BUCKET                                               |
-		s3bmk     Make bucket                        | s3cmd mb s3://BUCKET
-		s3brm     Remove bucket                      | s3cmd rb s3://BUCKET
-		s3du      Disk usage by buckets              | s3cmd du [s3://BUCKET[/PREFIX]]
-		s3info    Get various information            | s3cmd info s3://BUCKET[/OBJECT]
-		          about Buckets or Files             |
-	=====================================================+================================================================================
-	FILES                                                |
-		s3ls      List objects or buckets            | s3cmd ls [s3://BUCKET[/PREFIX]]
-		s3lsa     List all object in all buckets     | -
-		s3put     Put file into bucket               | s3cmd put FILE [FILE...] s3://BUCKET[/PREFIX]
-		s3get     Get file from bucket               | s3cmd get s3://BUCKET/OBJECT LOCAL_FILE
-		s3rm      Delete file from bucket            | 3cmd del s3://BUCKET/OBJECT
-		s3sync    Synchronize a directory tree to S3 | 3cmd sync LOCAL_DIR s3://BUCKET[/PREFIX] or s3://BUCKET[/PREFIX] LOCAL_DIR
-		s3acl     Modify Access control list         | s3cmd setacl s3://BUCKET[/OBJECT]
-                          for Bucket or Files                |
-	=====================================================+================================================================================
-	OBJECT                                               |
-		s3cp      Copy object                        | s3cmd cp s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
-		s3mv      Move object                        | s3cmd mv s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
-	=====================================================+================================================================================
-	OTHER                                                |
-		s3sign    Sign arbitrary string using        | s3cmd sign STRING-TO-SIGN
-		          the secret key                     |
-		s3log     Enable/disable bucket ac. logging  | s3cmd accesslog s3://BUCKET
-		s3fix     Fix invalid file names in a bucket | 3cmd fixbucket s3://BUCKET[/PREFIX]
-	=====================================================+================================================================================
-	WEB                                                  |
-		s3webmk   Create Website from bucket         | s3cmd ws-create s3://BUCKET
-		s3webrm   Delete Website                     | s3cmd ws-delete s3://BUCKET
-		s3webinfo Info about Website                 | s3cmd ws-info s3://BUCKET
-	=====================================================+================================================================================
-	CLOUD FRONT                                          |
-		s3cfls    List distribution points           | -
-		s3cfinfo  Display distribution               | s3cmd cfinfo [cf://DIST_ID]
-		          point parameters                   |
-		s3cfmk	  Create distribution point          | s3cmd cfcreate s3://BUCKET
-		s3cfrm    Delete distribution point          | s3cmd cfdelete cf://DIST_ID
-		s3cfmod   Change distribution parameters     | s3cmd cfmodify cf://DIST_ID
-		s3cfinval Display invalidation               | s3cmd cfinvalinfo cf://DIST_ID[/INVAL_ID]
-		          request(s) status                  |
-	======================================================================================================================================
-	======================================================================================================================================
+	==========================================================================================================================================
+	=========================================================+================================================================================
+	GENERAL                                                  |
+		s3h         help                                 | -
+	=========================================================+================================================================================
+	BUCKET                                                   |
+		s3bmk       Make bucket                          | s3cmd mb s3://BUCKET
+		s3brm       Remove bucket                        | s3cmd rb s3://BUCKET
+		s3du        Disk usage by buckets                | s3cmd du [s3://BUCKET[/PREFIX]]
+		s3info      Get various information              | s3cmd info s3://BUCKET[/OBJECT]
+		            about Buckets or Files               |
+	=========================================================+================================================================================
+	FILES                                                    |
+		s3lb*       List buckets                         | -
+		s3ls        List objects or buckets              | s3cmd ls [s3://BUCKET[/PREFIX]]
+		s3lsa       List all object in all buckets       | -
+		s3put       Put file into bucket                 | s3cmd put FILE [FILE...] s3://BUCKET[/PREFIX]
+		s3get       Get file from bucket                 | s3cmd get s3://BUCKET/OBJECT LOCAL_FILE
+		s3rm        Delete file from bucket              | 3cmd del s3://BUCKET/OBJECT
+		s3sync      Synchronize a directory tree to S3   | 3cmd sync LOCAL_DIR s3://BUCKET[/PREFIX] or s3://BUCKET[/PREFIX] LOCAL_DIR
+		s3acl       Modify Access control list           | s3cmd setacl s3://BUCKET[/OBJECT]
+                            for Bucket or Files                  |
+	=========================================================+================================================================================
+	OBJECT                                                   |
+		s3cp        Copy object                          | s3cmd cp s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
+		s3mv        Move object                          | s3cmd mv s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]
+	=========================================================+================================================================================
+	OTHER                                                    |
+		s3sign      Sign arbitrary string using          | s3cmd sign STRING-TO-SIGN
+		            the secret key                       |
+		s3log       Enable/disable bucket ac. logging    | s3cmd accesslog s3://BUCKET
+		s3fix       Fix invalid file names in a bucket   | 3cmd fixbucket s3://BUCKET[/PREFIX]
+	=========================================================+================================================================================
+	WEB                                                      |
+		s3webmk     Create Website from bucket           | s3cmd ws-create s3://BUCKET
+		s3webrm     Delete Website                       | s3cmd ws-delete s3://BUCKET
+		s3webinfo   Info about Website                   | s3cmd ws-info s3://BUCKET
+	=========================================================+================================================================================
+	MOUNT   [needs s3fs]                                     |
+		s3mnt*      Mount Bucket                         | BUCKET
+		s3umnt*     UnMount Bucket                       | BUCKET
+		s3mntall*   Mount All Buckets                    | -
+		s3umntall*  UnMount All Buckets                  | -
+	=========================================================+================================================================================
+	CLOUD FRONT                                              |
+		s3cfls      List distribution points             | -
+		s3cfinfo    Display distribution                 | s3cmd cfinfo [cf://DIST_ID]
+		            point parameters                     |
+		s3cfmk	    Create distribution point            | s3cmd cfcreate s3://BUCKET
+		s3cfrm      Delete distribution point            | s3cmd cfdelete cf://DIST_ID
+		s3cfmod     Change distribution parameters       | s3cmd cfmodify cf://DIST_ID
+		s3cfinval   Display invalidation                 | s3cmd cfinvalinfo cf://DIST_ID[/INVAL_ID]
+		            request(s) status                    |
+	=========================================================+================================================================================
+	==========================================================================================================================================
 EOF
 }
 
 
 if [[ "$me" == "$SELF" ]]; then
-	for name in s3h s3bmk s3brm s3du s3info s3ls s3lsa s3put s3get s3rm s3sync s3acl s3cp s3mv s3sign s3log s3fix s3webmk s3webrm s3webinfo s3cfls s3cfinfo s3cfmk s3cfrm s3cfmod s3cfinval ;
+	for name in s3h s3bmk s3brm s3du s3info s3lb s3ls s3lsa s3put s3get s3rm s3sync s3acl s3cp s3mv s3sign s3log s3fix s3webmk s3webrm s3webinfo s3mnt s3umnt s3mntall s3umntall s3cfls s3cfinfo s3cfmk s3cfrm s3cfmod s3cfinval ;
 	do
 		DST=$BIN/$name
 		#echo "  DST $DST"
@@ -108,7 +115,7 @@ if [[ "$me" == "s3h" || "$me" == "$SELF" ]]; then
 	exit
 fi
 
-if [[ -z "$@" && $me != "s3ls" && $me != "s3cfls" && $me != "s3lsa" ]]; then
+if [[ -z "$@" && $me != "s3ls" && $me != "s3lb" && $me != "s3cfls" && $me != "s3lsa" && $me != "s3mntall" && $me != "s3umntall" ]]; then
 	printHelp
 	echo "NO PARAMETERS PASSED. QUITTING"
 	exit
@@ -148,6 +155,12 @@ fi
 ######################
 # FILES
 ######################
+if [[ "$me" == "s3lb" ]]; then
+	#  List objects or buckets
+	#      s3cmd ls [s3://BUCKET[/PREFIX]]
+	CMDF="$S3CMD $S4CMD ls | perl -ne 'if (/s3\:\/\/(.*)/) { print \$1, \"\n\" }'"
+fi
+
 if [[ "$me" == "s3ls" ]]; then
 	#  List objects or buckets
 	#      s3cmd ls [s3://BUCKET[/PREFIX]]
@@ -254,6 +267,91 @@ if [[ "$me" == "s3webinfo" ]]; then
 fi
 
 
+S3FS=/home/$USER/bin/s3fs
+######################
+# MOUNT
+######################
+if [[ "$me" == "s3mnt" || "$me" == "s3mntall" || "$me" == "s3umnt" || "$me" == "s3umntall" ]]; then
+	if [[ -f "$S3FS" ]]; then
+		echo "S3FS INSTALLED" 1>&2
+		if [[ "$me" == "s3mnt" ]]; then
+			#Mount Bucket
+			#  BUCKET
+			#s3mnt
+
+			DST=/home/$USER/mnt/$1
+	
+			if [[ ! -d "$DST" ]]; then
+				echo "  CREATING DIR $DST" 1>&2
+				mkdir $DST
+			else
+				if [[ -f "$DST/0.dir" ]]; then
+					echo "  FOLDER ALREADY MOUNTED" 1>&2
+					exit 1
+				else
+					echo "  FOLDER OK. MOUNTING" 1>&2
+				fi
+			fi
+
+			S3FSOPTS="-ourl=https://s3.amazonaws.com -ouse_rrs=1 -ouse_cache=$HOME/tmp"
+			s3fs $1 $DST $S3FSOPTS 
+
+			if [[ -f "$DST/0.dir" ]]; then
+                        	echo "    FOLDER MOUNTED SUCCESSFULLY $DST" 1>&2
+                        else
+                              	echo "    FOLDER FAILED TO MOUNT $DST" 1>&2
+                                exit 1
+                        fi
+		fi
+
+		if [[ "$me" == "s3umnt" ]]; then
+			DST=/home/$USER/mnt/$1
+			if [[ -d "$DST" ]]; then
+				if [[ -f "$DST/0.dir" ]]; then
+					echo "UMOUNTING $DST" 1>&2
+					fusermount -u $DST
+					if [[ -f "$DST/0.dir" ]]; then
+						echo "ERROR UMOUNTING $DST" 1>&2
+						exit 1
+					else
+						echo "SUCCESS UMOUNTING $DST" 1>&2
+						rmdir $DST
+					fi
+				else
+					echo "FOLDER $DST DOES NOT APPEAR TO BE MOUNTED" 1>&2
+					exit 1
+				fi
+			else
+				echo "FOLDER $DST DOES NOT EXISTS" 1>&2
+				exit 1
+			fi
+		fi
+
+		if [[ "$me" == "s3mntall" ]]; then
+			#Mount All Buckets
+			#-
+			#s3mntAll
+			echo "  S3MNTALL" 1>&2
+			for bucket in `s3lb`; do
+				echo "    MOUNTING $bucket" 1>&2
+				s3mnt $bucket
+			done
+		fi
+
+		if [[ "$me" == "s3umntall" ]]; then
+			echo "  S3UMNTALL" 1>&2
+			for bucket in `s3lb`; do
+                                echo "    UNMOUNTING $bucket" 1>&2
+                                s3umnt $bucket
+                        done
+		fi
+	else
+		echo "S3FS NOT INSTALLED. NOT ABLE TO RUN $me" 2>&1
+		exit 1
+	fi
+fi
+
+
 
 ######################
 # CLOUD FRONT
@@ -294,5 +392,5 @@ if [[ "$me" == "s3cfinval" ]]; then
 	CMDF="$S3CMD $S4CMD cfinvalinfo $@"
 fi
 
-echo $CMDF
+echo $CMDF 1>&2
 eval $CMDF
