@@ -25,9 +25,12 @@ then
 	exit 2
 fi
 
+MESSAGE="$DATE :: $MESSAGE"
+
 echo FOLDER BEFORE $FOLDER
 FOLDER=${FOLDER%/*}
 echo FOLDER AFTER  $FOLDER
+CURRPWD=`pwd`
 
 	cd $FOLDER
 	STATUS=`git status -s`
@@ -43,7 +46,7 @@ echo FOLDER AFTER  $FOLDER
 		echo "CHANGED. PROCEDING"
 		echo "$STATUS"
 	fi
-	cd ..
+
 
 SERIAL=0
 if [ -f "$FOLDER/serial" ];
@@ -64,7 +67,6 @@ echo "MESSAGE $MESSAGE"
 
 
 
-cd $FOLDER
 echo "CHECKING FOR DIFFERENCES"
 	git add .
 	git status -s | grep -E "^\?\?" | perl -ne 'print substr($_, 3)' | xargs -n 1 -r -I '{}' bash -c "echo ADDING {};   ls -lah {}; git add {}"
@@ -76,7 +78,8 @@ echo "PULLING git@github.com:sauloal/$FOLDER.git"
 echo "PUSHING"
 	git push origin master
 echo "COMPLETED"
-cd ..
+
+cd $CURRPWD
 
 # needs to add automatic title with time
 # needs to check if folder exists
